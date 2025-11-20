@@ -57,7 +57,7 @@ els.fileInput.addEventListener('change', async (e) => {
         // Success
         state.imageUrl = hostedUrl;
         state.isUploading = false;
-        updateContextStatus("Ready. Type your edit prompt.");
+        updateContextStatus("Ready. Type your edit prompt."); // This will work now
         enableInput();
         appendBotMessage("✅ Image received! What should I change?");
 
@@ -170,6 +170,11 @@ function showContextBar(imgSrc, text) {
     els.contextBar.classList.remove('hidden');
     setTimeout(() => els.contextBar.classList.add('slide-up'), 10);
     els.contextThumb.src = imgSrc;
+    updateContextStatus(text);
+}
+
+// *** THIS WAS MISSING ***
+function updateContextStatus(text) {
     els.contextStatus.innerText = text;
 }
 
