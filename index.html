@@ -1,15 +1,12 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Nano Banana AI</title>
-    <meta name="description" content="AI Image Editor Bot">
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gray-900 text-white h-[100dvh] w-full flex flex-col overflow-hidden relative font-sans">
@@ -39,24 +36,18 @@
     </header>
 
     <!-- Chat Container -->
-    <main id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-4 pb-40 scroll-smooth w-full max-w-3xl mx-auto">
-        <!-- Welcome Message -->
+    <main id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-4 pb-32 scroll-smooth w-full max-w-3xl mx-auto">
         <div class="flex gap-3 fade-in">
             <div class="bot-avatar shadow-md">NB</div>
             <div class="bot-bubble shadow-md">
-                <p class="font-semibold text-yellow-500 mb-1">👋 Hello!</p>
-                <p class="mb-2">I can edit your photos. Follow these steps:</p>
-                <ul class="text-xs text-gray-400 space-y-1 list-disc pl-4">
-                    <li>Click <i class="fa-solid fa-image"></i> to upload a photo.</li>
-                    <li>Wait for the "Editing Active" bar.</li>
-                    <li>Type your prompt (e.g., "add sunglasses").</li>
-                </ul>
+                <p class="font-semibold text-yellow-500 mb-1">👋 Ready to edit!</p>
+                <p class="mb-2 text-sm">Upload an image to start.</p>
             </div>
         </div>
     </main>
 
-    <!-- Floating Context Bar (Shows which image is selected) -->
-    <div id="context-bar" class="fixed bottom-[80px] left-0 w-full px-4 z-20 hidden transition-all duration-300 transform translate-y-10 opacity-0">
+    <!-- Floating Context Bar -->
+    <div id="context-bar" class="fixed bottom-[75px] left-0 w-full px-3 z-20 hidden transition-all duration-300 transform translate-y-10 opacity-0">
         <div class="max-w-3xl mx-auto bg-gray-800/95 backdrop-blur-md border border-yellow-500/30 rounded-xl p-2 flex items-center justify-between shadow-2xl ring-1 ring-black/50">
             <div class="flex items-center gap-3 overflow-hidden">
                 <div class="relative w-10 h-10 shrink-0">
@@ -67,7 +58,7 @@
                 </div>
                 <div class="min-w-0">
                     <p class="text-yellow-500 font-bold text-xs truncate">Editing Active</p>
-                    <p id="context-status" class="text-gray-400 text-[10px] truncate">Image ready for prompt...</p>
+                    <p id="context-status" class="text-gray-400 text-[10px] truncate">Image ready...</p>
                 </div>
             </div>
             <button onclick="cancelImage()" class="w-8 h-8 rounded-lg hover:bg-red-500/20 hover:text-red-400 text-gray-500 transition flex items-center justify-center shrink-0">
@@ -76,80 +67,62 @@
         </div>
     </div>
 
-    <!-- Input Area -->
-    <footer class="bg-gray-800 p-3 border-t border-gray-700 fixed bottom-0 w-full z-30 shrink-0 safe-area-bottom">
-        <div class="max-w-3xl mx-auto flex items-end gap-2 relative">
+    <!-- FIXED Input Area -->
+    <footer class="bg-gray-800 border-t border-gray-700 fixed bottom-0 w-full z-30 shrink-0 pb-[env(safe-area-inset-bottom)]">
+        <div class="max-w-3xl mx-auto p-2 flex items-end gap-2">
             
             <!-- Hidden File Input -->
             <input type="file" id="file-upload" accept="image/*" class="hidden">
             
-            <!-- Upload Button -->
-            <button onclick="triggerUpload()" class="w-11 h-11 rounded-full bg-gray-700 hover:bg-gray-600 text-yellow-400 shrink-0 flex items-center justify-center transition shadow-lg active:scale-95">
+            <!-- Upload Button (Fixed Width) -->
+            <button onclick="triggerUpload()" class="w-10 h-10 mb-0.5 rounded-full bg-gray-700 hover:bg-gray-600 text-yellow-400 shrink-0 flex items-center justify-center transition shadow-lg active:scale-95">
                 <i class="fa-solid fa-image text-lg"></i>
             </button>
 
-            <!-- Text Area -->
-            <div class="flex-1 bg-gray-900 border border-gray-600 rounded-2xl flex items-center px-4 py-2 focus-within:border-yellow-500 focus-within:ring-1 focus-within:ring-yellow-500/50 transition-all">
+            <!-- Text Area Container (Flexible) -->
+            <div class="flex-1 bg-gray-900 border border-gray-600 rounded-2xl flex items-center px-3 py-2 focus-within:border-yellow-500 focus-within:ring-1 focus-within:ring-yellow-500/50 transition-all min-h-[44px]">
                 <textarea id="user-input" rows="1" placeholder="Upload image first..." disabled 
-                    class="w-full bg-transparent text-white focus:outline-none resize-none disabled:opacity-50 disabled:cursor-not-allowed max-h-[120px] text-sm"
+                    class="w-full bg-transparent text-white focus:outline-none resize-none disabled:opacity-50 disabled:cursor-not-allowed text-sm leading-relaxed"
+                    style="max-height: 100px;"
                     oninput="autoResize(this)"></textarea>
             </div>
 
-            <!-- Send Button -->
+            <!-- Send Button (Fixed Width) -->
             <button onclick="sendMessage()" id="send-btn" disabled 
-                class="w-11 h-11 rounded-full bg-gray-700 text-gray-500 shrink-0 flex items-center justify-center transition font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed active:scale-95">
+                class="w-10 h-10 mb-0.5 rounded-full bg-gray-700 text-gray-500 shrink-0 flex items-center justify-center transition font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed active:scale-95">
                 <i class="fa-solid fa-paper-plane"></i>
             </button>
         </div>
     </footer>
 
-    <!-- Settings Modal (With Developer Info) -->
+    <!-- Settings Modal -->
     <div id="settings-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-gray-800 rounded-xl border border-gray-700 p-5 w-full max-w-sm shadow-2xl overflow-hidden relative">
-            
-            <!-- Close Button -->
             <button onclick="toggleSettings()" class="absolute top-3 right-3 text-gray-400 hover:text-white">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
-
             <h2 class="text-lg font-bold text-yellow-500 mb-4"><i class="fa-solid fa-sliders"></i> Settings</h2>
-            
-            <!-- API Key Input -->
             <div class="mb-6">
                 <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block">ImgBB API Key (Optional)</label>
+                <p class="text-[10px] text-gray-500 mb-2">If uploads fail, get a free key from <a href="https://api.imgbb.com/" target="_blank" class="text-blue-400 underline">imgbb.com</a> and paste it here.</p>
                 <div class="flex gap-2">
-                    <input type="text" id="api-key-input" placeholder="Use default or paste yours" class="flex-1 bg-gray-900 border border-gray-600 rounded-lg p-2 text-xs text-white focus:border-yellow-500 focus:outline-none">
+                    <input type="text" id="api-key-input" placeholder="Paste key here..." class="flex-1 bg-gray-900 border border-gray-600 rounded-lg p-2 text-xs text-white focus:border-yellow-500 focus:outline-none">
                     <button onclick="saveSettings()" class="bg-yellow-500 text-black px-3 rounded-lg text-xs font-bold hover:bg-yellow-400">Save</button>
                 </div>
-                <p class="text-[10px] text-gray-500 mt-1">Needed to upload images for the AI to see.</p>
             </div>
-
             <hr class="border-gray-700 mb-4">
-
-            <!-- Developer Section -->
+            <!-- Dev Info -->
             <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Developer</h3>
-            
-            <div class="bg-gray-900 rounded-xl p-3 border border-gray-700 flex items-center gap-3 hover:border-yellow-500/50 transition group">
-                <!-- Dynamic Avatar -->
-                <img id="dev-avatar" src="https://github.com/Gtajisan.png" alt="Dev" class="w-12 h-12 rounded-full border-2 border-gray-700 group-hover:border-yellow-500 transition bg-gray-800 object-cover">
-                
+            <div class="bg-gray-900 rounded-xl p-3 border border-gray-700 flex items-center gap-3">
+                <img id="dev-avatar" src="https://github.com/Gtajisan.png" class="w-12 h-12 rounded-full bg-gray-800 object-cover">
                 <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-2">
-                        <h4 id="dev-name" class="font-bold text-white text-sm truncate">Gtajisan</h4>
-                        <a id="dev-link" href="https://github.com/Gtajisan" target="_blank" class="text-[10px] bg-gray-800 border border-gray-600 px-1.5 py-0.5 rounded hover:bg-gray-700 transition">
-                            <i class="fa-brands fa-github"></i> GitHub
-                        </a>
-                    </div>
-                    <p id="dev-bio" class="text-[11px] text-gray-400 truncate mt-0.5">Loading GitHub profile...</p>
+                    <h4 id="dev-name" class="font-bold text-white text-sm truncate">Gtajisan</h4>
+                    <a id="dev-link" href="https://github.com/Gtajisan" target="_blank" class="text-[10px] text-blue-400 hover:underline">Visit GitHub</a>
                 </div>
             </div>
-
-            <!-- Email Button -->
             <a href="mailto:ffjisan804@gmail.com" class="mt-3 flex items-center justify-center gap-2 w-full py-2 bg-gray-700/50 hover:bg-gray-700 rounded-lg text-xs text-gray-300 transition border border-dashed border-gray-600">
-                <i class="fa-solid fa-envelope text-yellow-500"></i>
-                ffjisan804@gmail.com
+                <i class="fa-solid fa-envelope text-yellow-500"></i> ffjisan804@gmail.com
             </a>
-
         </div>
     </div>
 
