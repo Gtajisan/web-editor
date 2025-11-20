@@ -2,326 +2,157 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nano Banana AI Editor</title>
-    <!-- Tailwind CSS for styling -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nano Banana AI</title>
+    <meta name="description" content="AI Image Editor Bot">
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for Icons -->
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #1e1e1e; }
-        ::-webkit-scrollbar-thumb { background: #facc15; border-radius: 10px; }
-        
-        /* Animations */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .message-bubble { animation: fadeIn 0.3s ease-out forwards; }
-        
-        .loader {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #facc15;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        banana: '#facc15',
-                        darkbg: '#121212',
-                        panel: '#1e1e1e'
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-darkbg text-white h-screen flex flex-col overflow-hidden font-sans">
+<body class="bg-gray-900 text-white h-[100dvh] w-full flex flex-col overflow-hidden relative font-sans">
 
     <!-- Header -->
-    <header class="bg-panel border-b border-gray-800 p-4 flex items-center justify-between shadow-lg z-10">
+    <header class="bg-gray-800 border-b border-gray-700 p-3 flex items-center justify-between z-30 shadow-lg shrink-0">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-banana rounded-full flex items-center justify-center text-black font-bold text-xl">
-                <i class="fa-solid fa-robot"></i>
-            </div>
-            <div>
-                <h1 class="font-bold text-lg tracking-wide">Nano Banana AI</h1>
-                <div class="flex items-center gap-2 text-xs text-green-400">
-                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Online
+            <div class="relative">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center text-black font-bold text-xl shadow-lg">
+                    <i class="fa-solid fa-robot"></i>
                 </div>
+                <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-gray-800 rounded-full animate-pulse"></span>
+            </div>
+            <div class="leading-tight">
+                <h1 class="font-bold text-base tracking-wide">Nano Banana</h1>
+                <p class="text-[10px] text-gray-400 uppercase tracking-wider">AI Editor Bot</p>
             </div>
         </div>
-        <button onclick="toggleSettings()" class="text-gray-400 hover:text-banana transition">
-            <i class="fa-solid fa-gear text-xl"></i>
-        </button>
+        <div class="flex gap-2">
+            <button onclick="toggleSettings()" class="w-9 h-9 rounded-full bg-gray-700 text-gray-400 hover:text-white transition flex items-center justify-center">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+            <button onclick="resetChat()" class="w-9 h-9 rounded-full bg-gray-700 text-gray-400 hover:text-red-400 transition flex items-center justify-center">
+                <i class="fa-solid fa-trash-can"></i>
+            </button>
+        </div>
     </header>
 
-    <!-- Chat Area -->
-    <main id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-4 pb-20">
+    <!-- Chat Container -->
+    <main id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-4 pb-40 scroll-smooth w-full max-w-3xl mx-auto">
         <!-- Welcome Message -->
-        <div class="message-bubble flex gap-3">
-            <div class="w-8 h-8 bg-banana rounded-full flex-shrink-0 flex items-center justify-center text-black text-xs">AI</div>
-            <div class="bg-panel p-3 rounded-r-xl rounded-bl-xl max-w-[80%] text-sm text-gray-200 shadow-md border border-gray-700">
-                Hello! 👋 I am Nano Banana AI.<br><br>
-                1. <b>Upload an image</b> first.<br>
-                2. Then type a <b>prompt</b> to edit it.<br>
-                <span class="text-xs text-gray-500 mt-2 block italic">Please set your ImgBB API key in settings first.</span>
+        <div class="flex gap-3 fade-in">
+            <div class="bot-avatar shadow-md">NB</div>
+            <div class="bot-bubble shadow-md">
+                <p class="font-semibold text-yellow-500 mb-1">👋 Hello!</p>
+                <p class="mb-2">I can edit your photos. Follow these steps:</p>
+                <ul class="text-xs text-gray-400 space-y-1 list-disc pl-4">
+                    <li>Click <i class="fa-solid fa-image"></i> to upload a photo.</li>
+                    <li>Wait for the "Editing Active" bar.</li>
+                    <li>Type your prompt (e.g., "add sunglasses").</li>
+                </ul>
             </div>
         </div>
     </main>
 
+    <!-- Floating Context Bar (Shows which image is selected) -->
+    <div id="context-bar" class="fixed bottom-[80px] left-0 w-full px-4 z-20 hidden transition-all duration-300 transform translate-y-10 opacity-0">
+        <div class="max-w-3xl mx-auto bg-gray-800/95 backdrop-blur-md border border-yellow-500/30 rounded-xl p-2 flex items-center justify-between shadow-2xl ring-1 ring-black/50">
+            <div class="flex items-center gap-3 overflow-hidden">
+                <div class="relative w-10 h-10 shrink-0">
+                    <img id="context-thumb" src="" class="w-full h-full rounded-lg object-cover border border-gray-600 bg-gray-900">
+                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center text-[8px] text-black font-bold border border-gray-800">
+                        <i class="fa-solid fa-pen"></i>
+                    </div>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-yellow-500 font-bold text-xs truncate">Editing Active</p>
+                    <p id="context-status" class="text-gray-400 text-[10px] truncate">Image ready for prompt...</p>
+                </div>
+            </div>
+            <button onclick="cancelImage()" class="w-8 h-8 rounded-lg hover:bg-red-500/20 hover:text-red-400 text-gray-500 transition flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
+
     <!-- Input Area -->
-    <footer class="bg-panel p-4 border-t border-gray-800">
-        <div class="max-w-4xl mx-auto flex items-end gap-2 relative">
+    <footer class="bg-gray-800 p-3 border-t border-gray-700 fixed bottom-0 w-full z-30 shrink-0 safe-area-bottom">
+        <div class="max-w-3xl mx-auto flex items-end gap-2 relative">
             
-            <!-- Image Upload Input (Hidden) -->
-            <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleImageUpload(this)">
+            <!-- Hidden File Input -->
+            <input type="file" id="file-upload" accept="image/*" class="hidden">
             
             <!-- Upload Button -->
-            <button onclick="document.getElementById('imageInput').click()" class="h-10 w-10 rounded-full bg-gray-700 hover:bg-gray-600 text-banana transition flex items-center justify-center flex-shrink-0">
-                <i class="fa-solid fa-image"></i>
+            <button onclick="triggerUpload()" class="w-11 h-11 rounded-full bg-gray-700 hover:bg-gray-600 text-yellow-400 shrink-0 flex items-center justify-center transition shadow-lg active:scale-95">
+                <i class="fa-solid fa-image text-lg"></i>
             </button>
 
-            <!-- Text Input -->
-            <textarea id="promptInput" rows="1" placeholder="Reply to image..." class="w-full bg-darkbg text-white rounded-2xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-banana resize-none overflow-hidden" style="min-height: 40px; max-height: 120px;" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
+            <!-- Text Area -->
+            <div class="flex-1 bg-gray-900 border border-gray-600 rounded-2xl flex items-center px-4 py-2 focus-within:border-yellow-500 focus-within:ring-1 focus-within:ring-yellow-500/50 transition-all">
+                <textarea id="user-input" rows="1" placeholder="Upload image first..." disabled 
+                    class="w-full bg-transparent text-white focus:outline-none resize-none disabled:opacity-50 disabled:cursor-not-allowed max-h-[120px] text-sm"
+                    oninput="autoResize(this)"></textarea>
+            </div>
 
             <!-- Send Button -->
-            <button onclick="sendPrompt()" class="h-10 w-10 rounded-full bg-banana hover:bg-yellow-400 text-black transition flex items-center justify-center flex-shrink-0 font-bold transform active:scale-95">
+            <button onclick="sendMessage()" id="send-btn" disabled 
+                class="w-11 h-11 rounded-full bg-gray-700 text-gray-500 shrink-0 flex items-center justify-center transition font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed active:scale-95">
                 <i class="fa-solid fa-paper-plane"></i>
             </button>
         </div>
     </footer>
 
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-80 hidden flex items-center justify-center z-50 backdrop-blur-sm">
-        <div class="bg-panel p-6 rounded-xl w-96 border border-gray-700 shadow-2xl">
-            <h2 class="text-xl font-bold text-banana mb-4">Settings</h2>
-            <p class="text-xs text-gray-400 mb-2">Required to convert your local files to URLs for the AI.</p>
+    <!-- Settings Modal (With Developer Info) -->
+    <div id="settings-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-gray-800 rounded-xl border border-gray-700 p-5 w-full max-w-sm shadow-2xl overflow-hidden relative">
             
-            <label class="block text-sm font-medium mb-1">ImgBB API Key</label>
-            <input type="text" id="apiKeyInput" placeholder="e.g., 39283492..." class="w-full bg-darkbg border border-gray-600 rounded p-2 text-sm mb-4 focus:border-banana outline-none">
+            <!-- Close Button -->
+            <button onclick="toggleSettings()" class="absolute top-3 right-3 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <h2 class="text-lg font-bold text-yellow-500 mb-4"><i class="fa-solid fa-sliders"></i> Settings</h2>
             
-            <div class="flex justify-end gap-2">
-                <button onclick="saveSettings()" class="bg-banana text-black px-4 py-2 rounded font-bold hover:bg-yellow-400">Save</button>
-                <button onclick="toggleSettings()" class="bg-gray-700 px-4 py-2 rounded hover:bg-gray-600">Close</button>
+            <!-- API Key Input -->
+            <div class="mb-6">
+                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block">ImgBB API Key (Optional)</label>
+                <div class="flex gap-2">
+                    <input type="text" id="api-key-input" placeholder="Use default or paste yours" class="flex-1 bg-gray-900 border border-gray-600 rounded-lg p-2 text-xs text-white focus:border-yellow-500 focus:outline-none">
+                    <button onclick="saveSettings()" class="bg-yellow-500 text-black px-3 rounded-lg text-xs font-bold hover:bg-yellow-400">Save</button>
+                </div>
+                <p class="text-[10px] text-gray-500 mt-1">Needed to upload images for the AI to see.</p>
             </div>
-            <div class="mt-4 text-xs text-gray-500 text-center">
-                <a href="https://api.imgbb.com/" target="_blank" class="underline hover:text-banana">Get Free Key Here</a>
+
+            <hr class="border-gray-700 mb-4">
+
+            <!-- Developer Section -->
+            <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Developer</h3>
+            
+            <div class="bg-gray-900 rounded-xl p-3 border border-gray-700 flex items-center gap-3 hover:border-yellow-500/50 transition group">
+                <!-- Dynamic Avatar -->
+                <img id="dev-avatar" src="https://github.com/Gtajisan.png" alt="Dev" class="w-12 h-12 rounded-full border-2 border-gray-700 group-hover:border-yellow-500 transition bg-gray-800 object-cover">
+                
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                        <h4 id="dev-name" class="font-bold text-white text-sm truncate">Gtajisan</h4>
+                        <a id="dev-link" href="https://github.com/Gtajisan" target="_blank" class="text-[10px] bg-gray-800 border border-gray-600 px-1.5 py-0.5 rounded hover:bg-gray-700 transition">
+                            <i class="fa-brands fa-github"></i> GitHub
+                        </a>
+                    </div>
+                    <p id="dev-bio" class="text-[11px] text-gray-400 truncate mt-0.5">Loading GitHub profile...</p>
+                </div>
             </div>
+
+            <!-- Email Button -->
+            <a href="mailto:ffjisan804@gmail.com" class="mt-3 flex items-center justify-center gap-2 w-full py-2 bg-gray-700/50 hover:bg-gray-700 rounded-lg text-xs text-gray-300 transition border border-dashed border-gray-600">
+                <i class="fa-solid fa-envelope text-yellow-500"></i>
+                ffjisan804@gmail.com
+            </a>
+
         </div>
     </div>
 
-    <script>
-        // State
-        let currentImageURL = null;
-        let IMGBB_API_KEY = localStorage.getItem('nano_imgbb_key') || '';
-
-        // UI Elements
-        const chatContainer = document.getElementById('chat-container');
-        const promptInput = document.getElementById('promptInput');
-        const apiKeyInput = document.getElementById('apiKeyInput');
-
-        // Initialize
-        if(IMGBB_API_KEY) apiKeyInput.value = IMGBB_API_KEY;
-        else toggleSettings(); // Open settings if no key
-
-        // Toggle Settings Modal
-        function toggleSettings() {
-            const modal = document.getElementById('settingsModal');
-            modal.classList.toggle('hidden');
-        }
-
-        // Save Settings
-        function saveSettings() {
-            const key = apiKeyInput.value.trim();
-            if(key) {
-                localStorage.setItem('nano_imgbb_key', key);
-                IMGBB_API_KEY = key;
-                toggleSettings();
-                addSystemMessage("✅ API Key saved. You can now upload images.");
-            } else {
-                alert("Please enter a key.");
-            }
-        }
-
-        // Handle Image Selection
-        async function handleImageUpload(input) {
-            if (!IMGBB_API_KEY) {
-                toggleSettings();
-                return alert("Please set your API Key first!");
-            }
-
-            const file = input.files[0];
-            if (!file) return;
-
-            // Show local preview immediately
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                addUserMessage(null, e.target.result);
-            }
-            reader.readAsDataURL(file);
-
-            // Show loading state
-            const loadId = showLoading("Uploading image...");
-
-            // Upload to ImgBB
-            try {
-                const formData = new FormData();
-                formData.append("image", file);
-
-                const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-                    method: "POST",
-                    body: formData
-                });
-
-                const data = await res.json();
-
-                if (data.success) {
-                    currentImageURL = data.data.url; // Store for next prompt
-                    removeLoading(loadId);
-                    addSystemMessage("✅ Image uploaded! Now reply with a prompt.");
-                } else {
-                    throw new Error(data.error.message || "Upload failed");
-                }
-            } catch (error) {
-                removeLoading(loadId);
-                addSystemMessage("❌ Upload Error: " + error.message);
-            }
-            
-            // Reset input
-            input.value = '';
-        }
-
-        // Handle Sending Prompt
-        async function sendPrompt() {
-            const prompt = promptInput.value.trim();
-            
-            if (!currentImageURL) {
-                return alert("❌ Please upload an image first!");
-            }
-            if (!prompt) {
-                return alert("❌ Please enter a prompt!");
-            }
-
-            // Add User Message
-            addUserMessage(prompt);
-            promptInput.value = '';
-            promptInput.style.height = 'auto';
-
-            // Show Loading
-            const loadId = showLoading("Nano Banana is cooking...");
-
-            // Call Tawsif API
-            try {
-                const apiUrl = `https://tawsif.is-a.dev/gemini/nano-banana?prompt=${encodeURIComponent(prompt)}&url=${encodeURIComponent(currentImageURL)}`;
-                
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-
-                removeLoading(loadId);
-
-                if (data.imageUrl) {
-                    // Add Bot Response with Image
-                    addBotImage(data.imageUrl);
-                    // Update current image context so next prompt edits THIS image
-                    currentImageURL = data.imageUrl; 
-                } else {
-                    addSystemMessage("❌ No image URL returned from API.");
-                }
-
-            } catch (error) {
-                removeLoading(loadId);
-                addSystemMessage("❌ API Error: " + error.message);
-            }
-        }
-
-        // UI: Add User Message
-        function addUserMessage(text, imageSrc = null) {
-            const div = document.createElement('div');
-            div.className = "message-bubble flex gap-3 justify-end";
-            
-            let content = '';
-            if(imageSrc) {
-                content = `<img src="${imageSrc}" class="max-w-[200px] rounded-xl border border-gray-600">`;
-            }
-            if(text) {
-                content += `<div class="bg-banana text-black p-3 rounded-l-xl rounded-tr-xl max-w-[80%] text-sm shadow-md font-medium">${text}</div>`;
-            }
-
-            div.innerHTML = `
-                <div class="flex flex-col items-end gap-2">${content}</div>
-                <div class="w-8 h-8 bg-gray-700 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs">You</div>
-            `;
-            chatContainer.appendChild(div);
-            scrollToBottom();
-        }
-
-        // UI: Add Bot Image
-        function addBotImage(url) {
-            const div = document.createElement('div');
-            div.className = "message-bubble flex gap-3";
-            div.innerHTML = `
-                 <div class="w-8 h-8 bg-banana rounded-full flex-shrink-0 flex items-center justify-center text-black text-xs">AI</div>
-                 <div class="flex flex-col gap-2">
-                    <div class="bg-panel p-2 rounded-r-xl rounded-bl-xl shadow-md border border-gray-700 inline-block">
-                        <img src="${url}" class="max-w-[250px] md:max-w-md rounded-lg cursor-pointer hover:opacity-90 transition" onclick="window.open('${url}', '_blank')">
-                    </div>
-                    <div class="text-xs text-gray-500 ml-1">Reply to edit this image further</div>
-                 </div>
-            `;
-            chatContainer.appendChild(div);
-            scrollToBottom();
-        }
-
-        // UI: Add System Message
-        function addSystemMessage(text) {
-            const div = document.createElement('div');
-            div.className = "message-bubble flex justify-center my-2";
-            div.innerHTML = `<span class="bg-gray-800 text-gray-300 text-xs px-3 py-1 rounded-full border border-gray-700">${text}</span>`;
-            chatContainer.appendChild(div);
-            scrollToBottom();
-        }
-
-        // UI: Loading Indicator
-        function showLoading(text) {
-            const id = 'load-' + Date.now();
-            const div = document.createElement('div');
-            div.id = id;
-            div.className = "message-bubble flex gap-3 items-center";
-            div.innerHTML = `
-                <div class="w-8 h-8 bg-banana rounded-full flex-shrink-0 flex items-center justify-center text-black text-xs">AI</div>
-                <div class="bg-panel px-4 py-2 rounded-r-xl rounded-bl-xl border border-gray-700 flex items-center gap-3">
-                    <div class="loader"></div>
-                    <span class="text-sm text-gray-300">${text}</span>
-                </div>
-            `;
-            chatContainer.appendChild(div);
-            scrollToBottom();
-            return id;
-        }
-
-        function removeLoading(id) {
-            const el = document.getElementById(id);
-            if(el) el.remove();
-        }
-
-        function scrollToBottom() {
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-        
-        // Enter key to send
-        promptInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendPrompt();
-            }
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
-  </html>
+</html>
