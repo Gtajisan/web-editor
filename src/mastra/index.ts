@@ -9,8 +9,12 @@ import { z } from "zod";
 
 import { sharedPostgresStorage } from "./storage";
 import { inngest, inngestServe } from "./inngest";
-import { exampleWorkflow } from "./workflows/exampleWorkflow"; // Replace with your own workflow
-import { exampleAgent } from "./agents/exampleAgent"; // Replace with your own agent
+import { p2aBotWorkflow } from "./workflows/p2aBotWorkflow";
+import { p2aBotAgent } from "./agents/p2aBotAgent";
+import { registerTelegramTrigger } from "../triggers/telegramTriggers";
+import { botStorage, initializeBotDatabase } from "./storage/botDatabase";
+import { readFileSync } from "fs";
+import { join } from "path";
 
 class ProductionPinoLogger extends MastraLogger {
   protected logger: pino.Logger;
@@ -56,9 +60,13 @@ class ProductionPinoLogger extends MastraLogger {
 export const mastra = new Mastra({
   storage: sharedPostgresStorage,
   // Register your workflows here
-  workflows: {},
+  workflows: {
+    p2aBotWorkflow,
+  },
   // Register your agents here
-  agents: {},
+  agents: {
+    p2aBotAgent,
+  },
   mcpServers: {
     allTools: new MCPServer({
       name: "allTools",
@@ -128,6 +136,73 @@ export const mastra = new Mastra({
         //    - Handle workflow state persistence and real-time updates
         // 3. Establishing a publish-subscribe system for real-time monitoring
         //    through the workflow:${workflowId}:${runId} channel
+      },
+
+      // ======================================================================
+      // P2A-Bot Dashboard
+      // ======================================================================
+      {
+        path: "/",
+        method: "GET",
+        createHandler: async () => {
+          return async (c: any) => {
+            try {
+              const html = readFileSync(join(process.cwd(), "public", "dashboard.html"), "utf-8");
+              return c.html(html);
+            } catch (error) {
+              return c.text("Dashboard not found", 404);
+            }
+          };
+        },
+      },
+
+      // ======================================================================
+      // P2A-Bot Statistics API
+      // ======================================================================
+      {
+        path: "/api/bot/stats",
+        method: "GET",
+        createHandler: async ({ mastra }) => {
+          return async (c: any) => {
+            const logger = mastra.getLogger();
+            
+            try {
+              logger?.info("📊 [Stats API] Fetching bot statistics");
+              
+              const allStats = await botStorage.getAllStats();
+              
+              const totalChats = allStats.length;
+              const totalMessages = allStats.reduce((sum, s) => sum + s.messageCount, 0);
+              const totalCommands = allStats.reduce((sum, s) => sum + s.commandsExecuted, 0);
+              const totalUsers = allStats.reduce((sum, s) => sum + s.userCount, 0);
+              
+              logger?.info("✅ [Stats API] Statistics retrieved", { totalChats, totalMessages });
+              
+              return c.json({
+                totalChats,
+                totalMessages,
+                totalCommands,
+                totalUsers,
+                chats: allStats.map((s: any) => ({
+                  chatId: s.chatId,
+                  messageCount: s.messageCount,
+                  commandsExecuted: s.commandsExecuted,
+                  userCount: s.userCount,
+                  lastActivity: s.lastActivity.toISOString(),
+                })),
+              });
+            } catch (error: any) {
+              logger?.error("❌ [Stats API] Error fetching statistics", { error: error.message });
+              return c.json({ 
+                totalChats: 0,
+                totalMessages: 0,
+                totalCommands: 0,
+                totalUsers: 0,
+                error: error.message 
+              }, 500);
+            }
+          };
+        },
       },
 
       // ======================================================================
@@ -208,6 +283,37 @@ export const mastra = new Mastra({
       // ...registerGithubTrigger({ ... }),
       // ...registerSlackTrigger({ ... }),
       // ...registerStripeWebhook({ ... }),
+
+      // ======================================================================
+      // P2A-Bot Telegram Trigger
+      // ======================================================================
+      ...registerTelegramTrigger({
+        triggerType: "telegram/message",
+        handler: async (mastra, triggerInfo) => {
+          const logger = mastra.getLogger();
+          logger?.info("🤖 [P2A-Bot] Processing Telegram message", {
+            chatId: triggerInfo.params.chatId,
+            userId: triggerInfo.params.userId,
+            userName: triggerInfo.params.userName,
+          });
+
+          // Create a unique thread ID for conversation tracking
+          const threadId = `telegram-chat-${triggerInfo.params.chatId}-user-${triggerInfo.params.userId}`;
+
+          // Start the workflow
+          const run = await p2aBotWorkflow.createRunAsync();
+          await run.start({
+            inputData: {
+              chatId: triggerInfo.params.chatId,
+              userId: triggerInfo.params.userId,
+              userName: triggerInfo.params.userName,
+              message: triggerInfo.params.message,
+              messageId: triggerInfo.params.messageId,
+              threadId,
+            },
+          });
+        },
+      }),
     ],
   },
   logger:
@@ -237,3 +343,8 @@ if (Object.keys(mastra.getAgents()).length > 1) {
     "More than 1 agents found. Currently, more than 1 agents are not supported in the UI, since doing so will cause app state to be inconsistent.",
   );
 }
+
+// Initialize P2A-Bot database tables
+initializeBotDatabase().catch((error) => {
+  console.error("Failed to initialize P2A-Bot database:", error);
+});
