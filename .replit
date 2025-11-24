@@ -17,13 +17,13 @@ run = ["sh", "-c", "cd .mastra/output && NODE_ENV=production node index.mjs"]
 deploymentTarget = "cloudrun"
 
 [[ports]]
-localPort = 5000
-externalPort = 80
-
-[[ports]]
 localPort = 3000
 externalPort = 3000
 exposeLocalhost = true
+
+[[ports]]
+localPort = 5000
+externalPort = 80
 
 [[ports]]
 localPort = 8289
@@ -73,3 +73,8 @@ waitForPort = 3000
 
 [workflows.workflow.metadata]
 outputType = "automations"
+
+[userenv]
+
+[userenv.shared]
+TELEGRAM_BOT_TOKEN = "8263644692:AAGta6OQq7NKb2jiV01j6DKPQlgOgktr-Qw"
