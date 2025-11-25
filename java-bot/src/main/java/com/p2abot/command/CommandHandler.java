@@ -35,6 +35,8 @@ public class CommandHandler {
     private final ClearwarnsCommand clearwarnsCommand;
     private final LogsCommand logsCommand;
     private final SettingsCommand settingsCommand;
+    private final DashboardCommand dashboardCommand;
+    private final RulesCommand rulesCommand;
 
     public void init() {
         log.info("🚀 [CommandHandler] Initializing P2A-Bot command handlers...");
@@ -62,8 +64,10 @@ public class CommandHandler {
         registry.register(clearwarnsCommand);
         registry.register(logsCommand);
         registry.register(settingsCommand);
+        registry.register(dashboardCommand);
+        registry.register(rulesCommand);
         registry.listCommands();
-        log.info("✅ [CommandHandler] 23 commands registered");
+        log.info("✅ [CommandHandler] 25 commands registered successfully");
     }
 
     public void handleCommand(Long chatId, Long userId, String commandText, JsonNode message) {
