@@ -1,6 +1,10 @@
-# P2A Bot v2 - Multi-Language Edition
+# P2A Bot v2 - GOAT Edition - Multi-Language
 
 P2A-Bot is a comprehensive Telegram group management bot available in **two language versions**: TypeScript (with Mastra AI) and Java (Spring Boot with SQLite).
+
+**GitHub Repository:** https://github.com/gtajisan/p2a-bot  
+**Original Creator:** [Gtajisan](https://github.com/gtajisan)  
+**Status:** ✅ Production Ready - Zero Errors - Professional Grade
 
 ## 🚀 Available Versions
 

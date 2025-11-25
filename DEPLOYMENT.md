@@ -1,6 +1,6 @@
 # P2A-Bot v2 - Deployment Guide
 
-Complete guide for deploying P2A-Bot to production on various platforms.
+Complete step-by-step guide for deploying P2A-Bot to production. Choose your platform below - Render is recommended for easiest setup.
 
 ## 🚀 Deployment Options Comparison
 
