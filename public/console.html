@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2A-Bot Console</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f0f6fc;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #3fb950;
+            display: inline-block;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        button {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: #30363d;
+            border-color: #58a6ff;
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #0d1117;
+            border-right: 1px solid #30363d;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            padding: 0;
+        }
+
+        .sidebar-title {
+            padding: 12px 16px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #21262d;
+        }
+
+        .sidebar-item {
+            padding: 8px 16px;
+            font-size: 13px;
+            color: #c9d1d9;
+            cursor: pointer;
+            border-left: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .sidebar-item:hover {
+            background: #161b22;
+            color: #58a6ff;
+            border-left-color: #58a6ff;
+        }
+
+        .sidebar-item.active {
+            background: #161b22;
+            color: #58a6ff;
+            border-left-color: #58a6ff;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .console-header {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .console-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+        }
+
+        .stat {
+            display: flex;
+            gap: 6px;
+            color: #8b949e;
+        }
+
+        .stat-value {
+            color: #f0f6fc;
+            font-weight: 600;
+        }
+
+        .console-output {
+            flex: 1;
+            background: #0d1117;
+            overflow-y: auto;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            padding: 16px 20px;
+        }
+
+        .console-line {
+            margin-bottom: 2px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .console-line-number {
+            color: #6e7681;
+            user-select: none;
+            min-width: 40px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .console-line-content {
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .log-timestamp {
+            color: #6e7681;
+        }
+
+        .log-info {
+            color: #c9d1d9;
+        }
+
+        .log-success {
+            color: #3fb950;
+        }
+
+        .log-warning {
+            color: #d29922;
+        }
+
+        .log-error {
+            color: #f85149;
+        }
+
+        .log-debug {
+            color: #79c0ff;
+        }
+
+        .log-system {
+            color: #a371f7;
+        }
+
+        .console-footer {
+            background: #161b22;
+            border-top: 1px solid #30363d;
+            padding: 12px 20px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            font-size: 12px;
+            color: #8b949e;
+        }
+
+        .input-box {
+            flex: 1;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            padding: 8px 12px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .input-box:focus {
+            outline: none;
+            border-color: #58a6ff;
+            background: #0d1117;
+        }
+
+        .tabs {
+            display: flex;
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 0;
+        }
+
+        .tab {
+            padding: 12px 16px;
+            border-bottom: 2px solid transparent;
+            color: #8b949e;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: #c9d1d9;
+            border-bottom-color: #30363d;
+        }
+
+        .tab.active {
+            color: #58a6ff;
+            border-bottom-color: #58a6ff;
+        }
+
+        .tab-content {
+            display: none;
+            flex: 1;
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            padding: 16px 20px;
+            background: #0d1117;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .stat-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 12px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .stat-value-large {
+            font-size: 20px;
+            font-weight: 700;
+            color: #f0f6fc;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #8b949e;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #21262d;
+            color: #c9d1d9;
+        }
+
+        tr:hover td {
+            background: #161b22;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-success {
+            background: rgba(63, 185, 80, 0.15);
+            color: #3fb950;
+        }
+
+        .badge-warning {
+            background: rgba(210, 153, 34, 0.15);
+            color: #d29922;
+        }
+
+        .badge-error {
+            background: rgba(248, 81, 73, 0.15);
+            color: #f85149;
+        }
+
+        .badge-info {
+            background: rgba(88, 166, 255, 0.15);
+            color: #58a6ff;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-track {
+            background: #0d1117;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 4px;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+            background: #6e7681;
+        }
+
+        .console-output,
+        .sidebar {
+            scrollbar-color: #30363d #0d1117;
+            scrollbar-width: thin;
+        }
+
+        .console-output,
+        .sidebar {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <span class="status-indicator"></span>
+            <span class="header-title">P2A-Bot Console</span>
+        </div>
+        <div class="header-controls">
+            <button onclick="pauseConsole()">Pause</button>
+            <button onclick="clearConsole()">Clear</button>
+            <button onclick="exportLogs()">Export</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar scrollbar-custom">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Filters</div>
+                <div class="sidebar-item active" onclick="filterLogs('all')">All Messages</div>
+                <div class="sidebar-item" onclick="filterLogs('success')">Success</div>
+                <div class="sidebar-item" onclick="filterLogs('warning')">Warnings</div>
+                <div class="sidebar-item" onclick="filterLogs('error')">Errors</div>
+                <div class="sidebar-item" onclick="filterLogs('debug')">Debug</div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Views</div>
+                <div class="sidebar-item" onclick="switchTab('console')">Console</div>
+                <div class="sidebar-item" onclick="switchTab('stats')">Statistics</div>
+                <div class="sidebar-item" onclick="switchTab('database')">Database</div>
+                <div class="sidebar-item" onclick="switchTab('commands')">Commands</div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">System</div>
+                <div class="sidebar-item" onclick="switchTab('performance')">Performance</div>
+                <div class="sidebar-item" onclick="switchTab('settings')">Settings</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Console Tab -->
+            <div id="console" class="tab-content active">
+                <div class="console-header">
+                    <div class="console-stats">
+                        <div class="stat">Lines: <span class="stat-value" id="line-count">0</span></div>
+                        <div class="stat">Errors: <span class="stat-value error-count">0</span></div>
+                        <div class="stat">Warnings: <span class="stat-value warning-count">0</span></div>
+                    </div>
+                </div>
+                <div class="console-output scrollbar-custom" id="console-output"></div>
+                <div class="console-footer">
+                    <input type="text" class="input-box" placeholder="Filter logs..." id="search-box" onkeyup="searchLogs(this.value)">
+                </div>
+            </div>
+
+            <!-- Statistics Tab -->
+            <div id="stats" class="tab-content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Messages</div>
+                        <div class="stat-value-large">1,247</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Users Warned</div>
+                        <div class="stat-value-large">8</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Users Banned</div>
+                        <div class="stat-value-large">3</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Active Groups</div>
+                        <div class="stat-value-large">42</div>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Value</th>
+                            <th>Change</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Messages/Hour</td>
+                            <td>156</td>
+                            <td><span class="badge badge-success">+12%</span></td>
+                        </tr>
+                        <tr>
+                            <td>Uptime</td>
+                            <td>42h 15m</td>
+                            <td><span class="badge badge-info">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>Response Time</td>
+                            <td>45ms</td>
+                            <td><span class="badge badge-success">Good</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Database Tab -->
+            <div id="database" class="tab-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Table</th>
+                            <th>Records</th>
+                            <th>Size</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>telegram_chats</td>
+                            <td>42</td>
+                            <td>8.2 KB</td>
+                            <td><span class="badge badge-success">Healthy</span></td>
+                        </tr>
+                        <tr>
+                            <td>bot_notes</td>
+                            <td>156</td>
+                            <td>24.5 KB</td>
+                            <td><span class="badge badge-success">Healthy</span></td>
+                        </tr>
+                        <tr>
+                            <td>bot_filters</td>
+                            <td>28</td>
+                            <td>4.3 KB</td>
+                            <td><span class="badge badge-success">Healthy</span></td>
+                        </tr>
+                        <tr>
+                            <td>bot_warnings</td>
+                            <td>89</td>
+                            <td>12.1 KB</td>
+                            <td><span class="badge badge-success">Healthy</span></td>
+                        </tr>
+                        <tr>
+                            <td>bot_stats</td>
+                            <td>42</td>
+                            <td>6.8 KB</td>
+                            <td><span class="badge badge-success">Healthy</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Commands Tab -->
+            <div id="commands" class="tab-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Command</th>
+                            <th>Usage</th>
+                            <th>Success Rate</th>
+                            <th>Avg Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>/help</td>
+                            <td>234</td>
+                            <td><span class="badge badge-success">100%</span></td>
+                            <td>45ms</td>
+                        </tr>
+                        <tr>
+                            <td>/stats</td>
+                            <td>189</td>
+                            <td><span class="badge badge-success">100%</span></td>
+                            <td>32ms</td>
+                        </tr>
+                        <tr>
+                            <td>/warn</td>
+                            <td>124</td>
+                            <td><span class="badge badge-success">98%</span></td>
+                            <td>78ms</td>
+                        </tr>
+                        <tr>
+                            <td>/ban</td>
+                            <td>45</td>
+                            <td><span class="badge badge-warning">96%</span></td>
+                            <td>156ms</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Performance Tab -->
+            <div id="performance" class="tab-content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">CPU Usage</div>
+                        <div class="stat-value-large">2.3%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Memory Usage</div>
+                        <div class="stat-value-large">156 MB</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Requests/Sec</div>
+                        <div class="stat-value-large">8.2</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Error Rate</div>
+                        <div class="stat-value-large">0.5%</div>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Current</th>
+                            <th>Avg</th>
+                            <th>Max</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Response Time</td>
+                            <td>45ms</td>
+                            <td>52ms</td>
+                            <td>234ms</td>
+                        </tr>
+                        <tr>
+                            <td>Memory Peak</td>
+                            <td>156 MB</td>
+                            <td>148 MB</td>
+                            <td>234 MB</td>
+                        </tr>
+                        <tr>
+                            <td>Uptime</td>
+                            <td>42h</td>
+                            <td>-</td>
+                            <td>42h</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const logData = [];
+        let currentFilter = 'all';
+
+        function addLog(message, level = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const lineNum = logData.length + 1;
+            logData.push({ message, level, timestamp, lineNum });
+            renderLogs();
+        }
+
+        function renderLogs() {
+            const output = document.getElementById('console-output');
+            const filtered = logData.filter(log => {
+                if (currentFilter === 'all') return true;
+                return log.level === currentFilter;
+            });
+
+            output.innerHTML = filtered.map(log => `
+                <div class="console-line">
+                    <span class="console-line-number">${log.lineNum}</span>
+                    <span class="console-line-content">
+                        <span class="log-timestamp">${log.timestamp}</span>
+                        <span class="log-${log.level}">${log.message}</span>
+                    </span>
+                </div>
+            `).join('');
+
+            output.scrollTop = output.scrollHeight;
+            document.getElementById('line-count').textContent = logData.length;
+        }
+
+        function filterLogs(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            renderLogs();
+        }
+
+        function clearConsole() {
+            logData.length = 0;
+            renderLogs();
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function exportLogs() {
+            const text = logData.map(log => `[${log.timestamp}] ${log.level.toUpperCase()}: ${log.message}`).join('\n');
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `p2a-bot-logs-${Date.now()}.txt`;
+            a.click();
+        }
+
+        function pauseConsole() {
+            event.target.textContent = event.target.textContent === 'Pause' ? 'Resume' : 'Pause';
+        }
+
+        function searchLogs(query) {
+            const output = document.getElementById('console-output');
+            document.querySelectorAll('.console-line').forEach(line => {
+                const content = line.textContent.toLowerCase();
+                line.style.display = content.includes(query.toLowerCase()) ? 'flex' : 'none';
+            });
+        }
+
+        // Initialize with sample logs
+        addLog('System initialized', 'system');
+        addLog('Database connection established', 'success');
+        addLog('23 commands registered', 'success');
+        addLog('Telegram webhook configured', 'info');
+        addLog('Permission system loaded', 'info');
+        addLog('Automation engine started', 'success');
+
+        setTimeout(() => {
+            addLog('Request received: /help', 'debug');
+            addLog('Command executed successfully', 'success');
+        }, 1000);
+
+        setTimeout(() => {
+            addLog('Background task completed', 'info');
+        }, 2000);
+    </script>
+</body>
+</html>
