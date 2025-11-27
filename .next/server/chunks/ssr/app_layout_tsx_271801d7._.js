@@ -1,3 +1,0 @@
-module.exports=[33290,a=>{"use strict";var b=a.i(7997);function c({children:a}){return(0,b.jsx)("html",{lang:"en",suppressHydrationWarning:!0,children:(0,b.jsx)("body",{className:"bg-slate-950 text-slate-50",children:a})})}a.s(["default",()=>c,"metadata",0,{title:"ESP32 RF Jammer Control Platform",description:"Advanced 2.4GHz wireless jammer control interface by Gtajisan"}])}];
-
-//# sourceMappingURL=app_layout_tsx_271801d7._.js.map

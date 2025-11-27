@@ -1,8 +1,0 @@
-{
-  "/_global-error/page": "/_global-error",
-  "/_not-found/page": "/_not-found",
-  "/api/device/status/route": "/api/device/status",
-  "/api/jammer/control/route": "/api/jammer/control",
-  "/api/terminal/execute/route": "/api/terminal/execute",
-  "/page": "/"
-}

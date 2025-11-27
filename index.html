@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nano Banana AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-900 text-white h-[100dvh] w-full flex flex-col overflow-hidden relative font-sans">
+
+    <!-- Header -->
+    <header class="bg-gray-800 border-b border-gray-700 p-3 flex items-center justify-between z-30 shadow-lg shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="relative">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center text-black font-bold text-xl shadow-lg">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-gray-800 rounded-full animate-pulse"></span>
+            </div>
+            <div class="leading-tight">
+                <h1 class="font-bold text-base tracking-wide">Nano Banana</h1>
+                <p class="text-[10px] text-gray-400 uppercase tracking-wider">AI Editor Bot</p>
+            </div>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="toggleSettings()" class="w-9 h-9 rounded-full bg-gray-700 text-gray-400 hover:text-white transition flex items-center justify-center">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+            <button onclick="resetChat()" class="w-9 h-9 rounded-full bg-gray-700 text-gray-400 hover:text-red-400 transition flex items-center justify-center">
+                <i class="fa-solid fa-trash-can"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Chat Container -->
+    <main id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-4 pb-32 scroll-smooth w-full max-w-3xl mx-auto">
+        <div class="flex gap-3 fade-in">
+            <div class="bot-avatar shadow-md">NB</div>
+            <div class="bot-bubble shadow-md">
+                <p class="font-semibold text-yellow-500 mb-1">👋 Ready to edit!</p>
+                <p class="mb-2 text-sm">Upload an image to start.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Context Bar -->
+    <div id="context-bar" class="fixed bottom-[75px] left-0 w-full px-3 z-20 hidden transition-all duration-300 transform translate-y-10 opacity-0">
+        <div class="max-w-3xl mx-auto bg-gray-800/95 backdrop-blur-md border border-yellow-500/30 rounded-xl p-2 flex items-center justify-between shadow-2xl ring-1 ring-black/50">
+            <div class="flex items-center gap-3 overflow-hidden">
+                <div class="relative w-10 h-10 shrink-0">
+                    <img id="context-thumb" src="" class="w-full h-full rounded-lg object-cover border border-gray-600 bg-gray-900">
+                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center text-[8px] text-black font-bold border border-gray-800">
+                        <i class="fa-solid fa-pen"></i>
+                    </div>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-yellow-500 font-bold text-xs truncate">Editing Active</p>
+                    <p id="context-status" class="text-gray-400 text-[10px] truncate">Image ready...</p>
+                </div>
+            </div>
+            <button onclick="cancelImage()" class="w-8 h-8 rounded-lg hover:bg-red-500/20 hover:text-red-400 text-gray-500 transition flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- FIXED Input Area -->
+    <footer class="bg-gray-800 border-t border-gray-700 fixed bottom-0 w-full z-30 shrink-0 pb-[env(safe-area-inset-bottom)]">
+        <div class="max-w-3xl mx-auto p-2 flex items-end gap-2">
+            
+            <!-- Hidden File Input -->
+            <input type="file" id="file-upload" accept="image/*" class="hidden">
+            
+            <!-- Upload Button (Fixed Width) -->
+            <button onclick="triggerUpload()" class="w-10 h-10 mb-0.5 rounded-full bg-gray-700 hover:bg-gray-600 text-yellow-400 shrink-0 flex items-center justify-center transition shadow-lg active:scale-95">
+                <i class="fa-solid fa-image text-lg"></i>
+            </button>
+
+            <!-- Text Area Container (Flexible) -->
+            <div class="flex-1 bg-gray-900 border border-gray-600 rounded-2xl flex items-center px-3 py-2 focus-within:border-yellow-500 focus-within:ring-1 focus-within:ring-yellow-500/50 transition-all min-h-[44px]">
+                <textarea id="user-input" rows="1" placeholder="Upload image first..." disabled 
+                    class="w-full bg-transparent text-white focus:outline-none resize-none disabled:opacity-50 disabled:cursor-not-allowed text-sm leading-relaxed"
+                    style="max-height: 100px;"
+                    oninput="autoResize(this)"></textarea>
+            </div>
+
+            <!-- Send Button (Fixed Width) -->
+            <button onclick="sendMessage()" id="send-btn" disabled 
+                class="w-10 h-10 mb-0.5 rounded-full bg-gray-700 text-gray-500 shrink-0 flex items-center justify-center transition font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed active:scale-95">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </footer>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-gray-800 rounded-xl border border-gray-700 p-5 w-full max-w-sm shadow-2xl overflow-hidden relative">
+            <button onclick="toggleSettings()" class="absolute top-3 right-3 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h2 class="text-lg font-bold text-yellow-500 mb-4"><i class="fa-solid fa-sliders"></i> Settings</h2>
+            <div class="mb-6 bg-gray-900 rounded-lg p-3 border border-green-500/30">
+                <p class="text-[10px] font-bold text-green-400 mb-2">✅ Direct Upload Enabled</p>
+                <p class="text-[10px] text-gray-400">Images upload directly to your browser. No API keys or external services needed!</p>
+            </div>
+            <hr class="border-gray-700 mb-4">
+            <!-- Dev Info -->
+            <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Developer</h3>
+            <div class="bg-gray-900 rounded-xl p-3 border border-gray-700 flex items-center gap-3">
+                <img id="dev-avatar" src="https://github.com/Gtajisan.png" class="w-12 h-12 rounded-full bg-gray-800 object-cover">
+                <div class="flex-1 min-w-0">
+                    <h4 id="dev-name" class="font-bold text-white text-sm truncate">Gtajisan</h4>
+                    <a id="dev-link" href="https://github.com/Gtajisan" target="_blank" class="text-[10px] text-blue-400 hover:underline">Visit GitHub</a>
+                </div>
+            </div>
+            <a href="mailto:ffjisan804@gmail.com" class="mt-3 flex items-center justify-center gap-2 w-full py-2 bg-gray-700/50 hover:bg-gray-700 rounded-lg text-xs text-gray-300 transition border border-dashed border-gray-600">
+                <i class="fa-solid fa-envelope text-yellow-500"></i> ffjisan804@gmail.com
+            </a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
