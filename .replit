@@ -72,3 +72,4 @@ outputType = "automations"
 
 [userenv.shared]
 TELEGRAM_BOT_TOKEN = "8263644692:AAGta6OQq7NKb2jiV01j6DKPQlgOgktr-Qw"
+IMGBB_API_KEY = "aa2a423da6c305e01ae06044d37d9648"

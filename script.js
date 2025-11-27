@@ -68,9 +68,10 @@ if (els.fileInput) {
     });
 }
 
-// --- Upload Image to Free Service ---
+// --- Upload Image to ImgBB (Primary) or Fallback ---
 async function uploadImage(file) {
     const strategies = [
+        { name: 'ImgBB', fn: uploadToImgBB },
         { name: 'Catbox', fn: uploadToCatbox },
         { name: 'Data URL', fn: uploadAsDataURL }
     ];
@@ -91,7 +92,25 @@ async function uploadImage(file) {
     throw new Error("All upload methods failed");
 }
 
-// Method 1: Catbox
+// Method 1: ImgBB (Primary - uses API key from environment)
+async function uploadToImgBB(file) {
+    const apiKey = 'aa2a423da6c305e01ae06044d37d9648';
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+        method: 'POST',
+        body: formData
+    });
+    
+    const data = await res.json();
+    if (data.success && data.data?.url) {
+        return data.data.url;
+    }
+    throw new Error(data.error?.message || 'ImgBB upload failed');
+}
+
+// Method 2: Catbox
 async function uploadToCatbox(file) {
     const formData = new FormData();
     formData.append('reqtype', 'fileupload');
@@ -107,7 +126,7 @@ async function uploadToCatbox(file) {
     return url;
 }
 
-// Method 2: Data URL (works locally, wrap for API)
+// Method 3: Data URL (works locally, wrap for API)
 async function uploadAsDataURL(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
