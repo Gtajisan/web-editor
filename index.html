@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nano Banana AI</title>
+    <title>Nano Banana AI - Multi-API Editor</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
@@ -22,7 +22,7 @@
             </div>
             <div class="leading-tight">
                 <h1 class="font-bold text-base tracking-wide">Nano Banana</h1>
-                <p class="text-[10px] text-gray-400 uppercase tracking-wider">AI Editor Bot</p>
+                <p class="text-[10px] text-gray-400 uppercase tracking-wider" id="backend-label">Multi-API</p>
             </div>
         </div>
         <div class="flex gap-2">
@@ -40,8 +40,8 @@
         <div class="flex gap-3 fade-in">
             <div class="bot-avatar shadow-md">NB</div>
             <div class="bot-bubble shadow-md">
-                <p class="font-semibold text-yellow-500 mb-1">👋 Ready to edit!</p>
-                <p class="mb-2 text-sm">Upload an image to start.</p>
+                <p class="font-semibold text-yellow-500 mb-1">👋 Multi-API Ready!</p>
+                <p class="mb-2 text-sm">Upload image or search stock photos. Configure APIs in settings.</p>
             </div>
         </div>
     </main>
@@ -97,16 +97,74 @@
 
     <!-- Settings Modal -->
     <div id="settings-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-gray-800 rounded-xl border border-gray-700 p-5 w-full max-w-sm shadow-2xl overflow-hidden relative">
-            <button onclick="toggleSettings()" class="absolute top-3 right-3 text-gray-400 hover:text-white">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-            <h2 class="text-lg font-bold text-yellow-500 mb-4"><i class="fa-solid fa-sliders"></i> Settings</h2>
-            <div class="mb-6 bg-gray-900 rounded-lg p-3 border border-green-500/30">
-                <p class="text-[10px] font-bold text-green-400 mb-2">✅ Direct Upload Enabled</p>
-                <p class="text-[10px] text-gray-400">Images upload directly to your browser. No API keys or external services needed!</p>
+        <div class="bg-gray-800 rounded-xl border border-gray-700 p-5 w-full max-w-md shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-yellow-500"><i class="fa-solid fa-sliders"></i> Settings</h2>
+                <button onclick="toggleSettings()" class="text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
             </div>
+
+            <!-- Backend Selector -->
+            <div class="mb-6 bg-gray-900 rounded-lg p-3 border border-yellow-500/30">
+                <label class="text-[10px] font-bold text-yellow-400 block mb-2">📡 Image Editor Backend</label>
+                <select id="backend-select" onchange="setBackend(this.value)" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500">
+                    <option value="nano">Nano Banana (Default)</option>
+                    <option value="photoroom">Photoroom AI (Sandbox)</option>
+                </select>
+                <p class="text-[9px] text-gray-400 mt-2">Switch between different image editing backends</p>
+            </div>
+
+            <!-- Image Source -->
+            <div class="mb-6 bg-gray-900 rounded-lg p-3 border border-blue-500/30">
+                <label class="text-[10px] font-bold text-blue-400 block mb-2">🖼️ Image Sources</label>
+                <div class="space-y-2">
+                    <button onclick="searchUnsplash()" class="w-full bg-gray-700 hover:bg-gray-600 rounded-lg px-3 py-2 text-white text-xs transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass"></i> Search Unsplash
+                    </button>
+                    <button onclick="searchPexels()" class="w-full bg-gray-700 hover:bg-gray-600 rounded-lg px-3 py-2 text-white text-xs transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass"></i> Search Pexels
+                    </button>
+                </div>
+                <p class="text-[9px] text-gray-400 mt-2">Get free stock images directly into editor</p>
+            </div>
+
             <hr class="border-gray-700 mb-4">
+
+            <!-- Nano Banana API -->
+            <div class="mb-4 bg-gray-900 rounded-lg p-3 border border-gray-700">
+                <label class="text-[10px] font-bold text-gray-400 block mb-2">Nano Banana API</label>
+                <p class="text-[9px] text-gray-400">Endpoint: https://tawsif.is-a.dev/gemini/nano-banana</p>
+                <p class="text-[9px] text-green-400 mt-1">✅ No API key required</p>
+            </div>
+
+            <!-- Photoroom API -->
+            <div class="mb-4 bg-gray-900 rounded-lg p-3 border border-gray-700">
+                <label class="text-[10px] font-bold text-gray-400 block mb-2">Photoroom Sandbox API</label>
+                <p class="text-[9px] text-gray-400">Free tier with watermark (for testing)</p>
+                <p class="text-[9px] text-blue-400 mt-1">💧 Free - Watermarked results</p>
+            </div>
+
+            <!-- Unsplash -->
+            <div class="mb-4 bg-gray-900 rounded-lg p-3 border border-gray-700">
+                <label class="text-[10px] font-bold text-gray-400 block mb-2">Unsplash API (Stock Images)</label>
+                <input type="text" id="unsplash-key" placeholder="API key (optional)" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-2 py-1 text-white text-xs focus:border-yellow-500 text-[9px]">
+                <p class="text-[9px] text-gray-400 mt-1">Free signup at: unsplash.com/api</p>
+            </div>
+
+            <!-- Pexels -->
+            <div class="mb-6 bg-gray-900 rounded-lg p-3 border border-gray-700">
+                <label class="text-[10px] font-bold text-gray-400 block mb-2">Pexels API (Stock Images)</label>
+                <input type="text" id="pexels-key" placeholder="API key (optional)" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-2 py-1 text-white text-xs focus:border-yellow-500 text-[9px]">
+                <p class="text-[9px] text-gray-400 mt-1">Free signup at: pexels.com/api</p>
+            </div>
+
+            <button onclick="saveSettings()" class="w-full bg-yellow-500 text-black rounded-lg px-3 py-2 text-sm font-bold hover:bg-yellow-600 transition">
+                Save Settings
+            </button>
+
+            <hr class="border-gray-700 my-4">
+
             <!-- Dev Info -->
             <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Developer</h3>
             <div class="bg-gray-900 rounded-xl p-3 border border-gray-700 flex items-center gap-3">
@@ -119,6 +177,27 @@
             <a href="mailto:ffjisan804@gmail.com" class="mt-3 flex items-center justify-center gap-2 w-full py-2 bg-gray-700/50 hover:bg-gray-700 rounded-lg text-xs text-gray-300 transition border border-dashed border-gray-600">
                 <i class="fa-solid fa-envelope text-yellow-500"></i> ffjisan804@gmail.com
             </a>
+        </div>
+    </div>
+
+    <!-- Search Modal -->
+    <div id="search-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-gray-800 rounded-xl border border-gray-700 p-5 w-full max-w-sm shadow-2xl">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-yellow-500"><i class="fa-solid fa-magnifying-glass"></i> Search Stock Photos</h2>
+                <button onclick="closeSearchModal()" class="text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="search-query" placeholder="Search (e.g., sunset, cat, nature)" class="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:border-yellow-500 text-sm">
+                <button onclick="executeSearch()" class="bg-yellow-500 text-black px-4 py-2 rounded-lg font-bold hover:bg-yellow-600 transition">
+                    Search
+                </button>
+            </div>
+            <div id="search-results" class="grid grid-cols-2 gap-2 max-h-[400px] overflow-y-auto">
+                <!-- Results will be loaded here -->
+            </div>
         </div>
     </div>
 

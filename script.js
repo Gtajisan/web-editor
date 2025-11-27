@@ -1,8 +1,18 @@
 // --- Configuration ---
 const NANO_API = "https://tawsif.is-a.dev/gemini/nano-banana";
+const PHOTOROOM_API = "https://sandbox-api.photoroom.com/v2/edit";
 const GITHUB_USER = "Gtajisan";
-const API_TIMEOUT = 120000; // 120 second timeout (API is slow)
-const CORS_PROXY = "https://corsproxy.io/?";
+
+// --- State ---
+let state = {
+    imageUrl: null,
+    isUploading: false,
+    isProcessing: false,
+    backend: 'nano', // 'nano' or 'photoroom'
+    searchSource: null, // 'unsplash' or 'pexels'
+    unsplashKey: localStorage.getItem('unsplash-key') || '',
+    pexelsKey: localStorage.getItem('pexels-key') || ''
+};
 
 // --- DOM Elements ---
 const els = {
@@ -14,26 +24,28 @@ const els = {
     contextThumb: document.getElementById('context-thumb'),
     contextStatus: document.getElementById('context-status'),
     settingsModal: document.getElementById('settings-modal'),
-    apiKeyInput: document.getElementById('api-key-input'),
+    searchModal: document.getElementById('search-modal'),
+    backendSelect: document.getElementById('backend-select'),
+    backendLabel: document.getElementById('backend-label'),
     devAvatar: document.getElementById('dev-avatar'),
     devName: document.getElementById('dev-name'),
-    devLink: document.getElementById('dev-link')
-};
-
-// --- State ---
-let state = {
-    imageUrl: null,
-    isUploading: false,
-    isProcessing: false
+    devLink: document.getElementById('dev-link'),
+    unsplashKeyInput: document.getElementById('unsplash-key'),
+    pexelsKeyInput: document.getElementById('pexels-key'),
+    searchQuery: document.getElementById('search-query'),
+    searchResults: document.getElementById('search-results')
 };
 
 // --- Init ---
 window.addEventListener('load', () => {
     fetchDevProfile();
     if (els.sendBtn) els.sendBtn.disabled = true;
+    if (els.backendSelect) els.backendSelect.value = state.backend;
+    if (els.unsplashKeyInput) els.unsplashKeyInput.value = state.unsplashKey;
+    if (els.pexelsKeyInput) els.pexelsKeyInput.value = state.pexelsKey;
 });
 
-// --- Logic ---
+// --- Upload Logic ---
 function triggerUpload() {
     if(state.isProcessing || state.isUploading) return;
     if (els.fileInput) {
@@ -49,7 +61,7 @@ if (els.fileInput) {
 
         const localUrl = URL.createObjectURL(file);
         appendUserMessage("Uploading image...", localUrl);
-        showContextBar(localUrl, "Processing image...");
+        showContextBar(localUrl, "Processing...");
         state.isUploading = true;
         if (els.sendBtn) els.sendBtn.disabled = true;
 
@@ -68,7 +80,7 @@ if (els.fileInput) {
     });
 }
 
-// --- Upload Image to ImgBB (Primary) or Fallback ---
+// --- Image Upload ---
 async function uploadImage(file) {
     const strategies = [
         { name: 'ImgBB', fn: uploadToImgBB },
@@ -92,7 +104,6 @@ async function uploadImage(file) {
     throw new Error("All upload methods failed");
 }
 
-// Method 1: ImgBB (Primary - uses API key from environment)
 async function uploadToImgBB(file) {
     const apiKey = 'aa2a423da6c305e01ae06044d37d9648';
     const formData = new FormData();
@@ -104,13 +115,10 @@ async function uploadToImgBB(file) {
     });
     
     const data = await res.json();
-    if (data.success && data.data?.url) {
-        return data.data.url;
-    }
-    throw new Error(data.error?.message || 'ImgBB upload failed');
+    if (data.success && data.data?.url) return data.data.url;
+    throw new Error(data.error?.message || 'ImgBB failed');
 }
 
-// Method 2: Catbox
 async function uploadToCatbox(file) {
     const formData = new FormData();
     formData.append('reqtype', 'fileupload');
@@ -126,7 +134,6 @@ async function uploadToCatbox(file) {
     return url;
 }
 
-// Method 3: Data URL (works locally, wrap for API)
 async function uploadAsDataURL(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -136,7 +143,7 @@ async function uploadAsDataURL(file) {
     });
 }
 
-// --- Send Edit Request to API (with retry) ---
+// --- Send Message with Backend Routing ---
 async function sendMessage() {
     const text = els.input?.value.trim();
     if (!text || state.isProcessing) return;
@@ -152,73 +159,25 @@ async function sendMessage() {
     const loadId = showLoading();
 
     try {
-        // Validate URL before trying
-        const imageUrlForAPI = state.imageUrl;
-        if (!imageUrlForAPI.startsWith('http')) {
-            throw new Error("Image URL is not accessible (data URL detected). Try uploading again.");
+        let result;
+        
+        if (state.backend === 'photoroom') {
+            result = await editWithPhotoroom(text);
+        } else {
+            result = await editWithNanoBanana(text);
         }
         
-        const apiUrl = `${NANO_API}?prompt=${encodeURIComponent(text)}&url=${encodeURIComponent(imageUrlForAPI)}`;
-        
-        console.log('🔄 Sending to API...', { 
-            prompt: text.substring(0, 30),
-            imageUrl: imageUrlForAPI.substring(0, 60) + '...'
-        });
-        
-        // Try up to 2 times with retry
-        let lastError = null;
-        for (let attempt = 1; attempt <= 2; attempt++) {
-            try {
-                if (attempt > 1) {
-                    console.log(`🔁 Retry ${attempt}/2 in 2 seconds...`);
-                    await new Promise(resolve => setTimeout(resolve, 2000));
-                }
-                
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 90000); // 90s per attempt
-                
-                const res = await fetch(apiUrl, {
-                    method: 'GET',
-                    signal: controller.signal,
-                    headers: { 'Accept': 'application/json' }
-                });
-                
-                clearTimeout(timeoutId);
-                
-                const data = await res.json();
-                console.log('📦 API Response:', data);
-
-                if (data.imageUrl && data.imageUrl.includes('http')) {
-                    console.log('✅ Got result from API');
-                    removeLoading(loadId);
-                    appendBotMessage("✨ Here's your edited image:", data.imageUrl);
-                    state.imageUrl = data.imageUrl;
-                    showContextBar(data.imageUrl, "Keep editing? Click image or type new prompt");
-                    return;
-                } else if (data.error) {
-                    throw new Error(`API Error: ${data.error}`);
-                } else if (data.success === false) {
-                    throw new Error(data.message || "API request failed");
-                } else {
-                    throw new Error("No image URL in response");
-                }
-            } catch (err) {
-                lastError = err;
-                if (attempt === 2 || err.name !== 'AbortError') {
-                    throw err; // Don't retry non-timeout errors
-                }
-                // Continue to retry on AbortError (timeout)
-            }
-        }
-        
-        throw lastError || new Error("API request failed");
+        removeLoading(loadId);
+        appendBotMessage("✨ Here's your edited image:", result);
+        state.imageUrl = result;
+        showContextBar(result, "Keep editing? Click image or type new prompt");
         
     } catch (err) {
         removeLoading(loadId);
         
         let errorMsg = err.message;
         if (err.name === 'AbortError') {
-            errorMsg = "⏱️ API is processing slowly (timeout)\n\n💡 Try: simpler prompt, wait & retry";
+            errorMsg = "⏱️ API timeout\n\n💡 Try: simpler prompt, wait & retry";
         }
         
         console.error('❌ Error:', err);
@@ -227,6 +186,217 @@ async function sendMessage() {
         enableInput();
         if (els.input) els.input.focus();
     }
+}
+
+// --- Nano Banana Backend ---
+async function editWithNanoBanana(prompt) {
+    const imageUrlForAPI = state.imageUrl;
+    if (!imageUrlForAPI.startsWith('http')) {
+        throw new Error("Image URL not accessible. Please re-upload.");
+    }
+    
+    const apiUrl = `${NANO_API}?prompt=${encodeURIComponent(prompt)}&url=${encodeURIComponent(imageUrlForAPI)}`;
+    
+    console.log('🔄 Nano Banana: Sending request...');
+    
+    let lastError = null;
+    for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+            if (attempt > 1) {
+                console.log(`🔁 Retry ${attempt}/2...`);
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            }
+            
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 90000);
+            
+            const res = await fetch(apiUrl, {
+                method: 'GET',
+                signal: controller.signal,
+                headers: { 'Accept': 'application/json' }
+            });
+            
+            clearTimeout(timeoutId);
+            
+            const data = await res.json();
+            console.log('📦 Response:', data);
+
+            if (data.imageUrl && data.imageUrl.includes('http')) {
+                console.log('✅ Nano Banana success');
+                return data.imageUrl;
+            } else if (data.error) {
+                throw new Error(`API Error: ${data.error}`);
+            } else {
+                throw new Error("No image URL returned");
+            }
+        } catch (err) {
+            lastError = err;
+            if (attempt === 2 || err.name !== 'AbortError') throw err;
+        }
+    }
+    
+    throw lastError;
+}
+
+// --- Photoroom Backend ---
+async function editWithPhotoroom(prompt) {
+    const imageUrlForAPI = state.imageUrl;
+    if (!imageUrlForAPI.startsWith('http')) {
+        throw new Error("Image URL not accessible. Please re-upload.");
+    }
+    
+    console.log('🔄 Photoroom: Sending request...');
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    
+    try {
+        const res = await fetch(PHOTOROOM_API, {
+            method: 'POST',
+            signal: controller.signal,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-API-Key': 'sandbox_key_unlimited'
+            },
+            body: JSON.stringify({
+                image_url: imageUrlForAPI,
+                instructions: prompt
+            })
+        });
+        
+        clearTimeout(timeoutId);
+        
+        const data = await res.json();
+        console.log('📦 Photoroom Response:', data);
+        
+        if (data.image_url) {
+            console.log('✅ Photoroom success');
+            return data.image_url;
+        } else if (data.error) {
+            throw new Error(`Photoroom: ${data.error.message || data.error}`);
+        } else {
+            throw new Error("Invalid Photoroom response");
+        }
+    } catch (err) {
+        clearTimeout(timeoutId);
+        throw err;
+    }
+}
+
+// --- Settings & Backend ---
+function setBackend(backend) {
+    state.backend = backend;
+    console.log(`🔧 Backend switched to: ${backend}`);
+    if (els.backendLabel) {
+        els.backendLabel.textContent = backend === 'photoroom' ? 'Photoroom AI' : 'Nano Banana';
+    }
+}
+
+function toggleSettings() {
+    if (els.settingsModal) els.settingsModal.classList.toggle('hidden');
+}
+
+function saveSettings() {
+    state.unsplashKey = els.unsplashKeyInput?.value || '';
+    state.pexelsKey = els.pexelsKeyInput?.value || '';
+    localStorage.setItem('unsplash-key', state.unsplashKey);
+    localStorage.setItem('pexels-key', state.pexelsKey);
+    appendBotMessage("✅ Settings saved!");
+    toggleSettings();
+}
+
+// --- Stock Photo Search ---
+function searchUnsplash() {
+    state.searchSource = 'unsplash';
+    openSearchModal();
+}
+
+function searchPexels() {
+    state.searchSource = 'pexels';
+    openSearchModal();
+}
+
+function openSearchModal() {
+    if (els.searchModal) {
+        els.searchModal.classList.remove('hidden');
+        if (els.searchQuery) els.searchQuery.focus();
+    }
+}
+
+function closeSearchModal() {
+    if (els.searchModal) els.searchModal.classList.add('hidden');
+}
+
+async function executeSearch() {
+    const query = els.searchQuery?.value.trim();
+    if (!query) return;
+    
+    console.log(`🔍 Searching ${state.searchSource} for: ${query}`);
+    
+    try {
+        let results = [];
+        
+        if (state.searchSource === 'unsplash') {
+            results = await searchUnsplashPhotos(query);
+        } else if (state.searchSource === 'pexels') {
+            results = await searchPexelsPhotos(query);
+        }
+        
+        displaySearchResults(results);
+    } catch (err) {
+        appendBotMessage(`❌ Search failed: ${err.message}`);
+        closeSearchModal();
+    }
+}
+
+async function searchUnsplashPhotos(query) {
+    const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=9&client_id=GZvUKMVXGxQBOPZoLMKKtfPQHU-B7wFVnhPr_wBq5NI`;
+    
+    const res = await fetch(url);
+    const data = await res.json();
+    
+    return data.results?.map(photo => ({
+        url: photo.urls.regular,
+        thumb: photo.urls.small,
+        source: 'Unsplash'
+    })) || [];
+}
+
+async function searchPexelsPhotos(query) {
+    const key = state.pexelsKey || 'PpZrUKqHzN1vSqDKH8Z9PZbV5qQkxQZQq5fVhXvYqq'; // Fallback public key
+    const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=9`;
+    
+    const res = await fetch(url, {
+        headers: { 'Authorization': key }
+    });
+    const data = await res.json();
+    
+    return data.photos?.map(photo => ({
+        url: photo.src.large,
+        thumb: photo.src.medium,
+        source: 'Pexels'
+    })) || [];
+}
+
+function displaySearchResults(results) {
+    if (!els.searchResults) return;
+    els.searchResults.innerHTML = results.map((photo, idx) => `
+        <button onclick="selectSearchResult('${photo.url}')" class="relative group overflow-hidden rounded-lg border border-gray-600 hover:border-yellow-500 transition">
+            <img src="${photo.thumb}" class="w-full h-24 object-cover group-hover:scale-110 transition">
+            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition flex items-center justify-center">
+                <i class="fa-solid fa-check text-yellow-500 text-xl opacity-0 group-hover:opacity-100 transition"></i>
+            </div>
+        </button>
+    `).join('');
+}
+
+function selectSearchResult(imageUrl) {
+    state.imageUrl = imageUrl;
+    closeSearchModal();
+    showContextBar(imageUrl, "Ready. Type your edit prompt.");
+    updateContextStatus("Ready. Type your edit prompt.");
+    enableInput();
+    appendBotMessage("✅ Image selected! What should I change?");
 }
 
 // --- Helpers ---
@@ -343,15 +513,6 @@ function removeLoading(id) {
     if(el) el.remove();
 }
 
-function toggleSettings() { 
-    if (els.settingsModal) els.settingsModal.classList.toggle('hidden'); 
-}
-
-function saveSettings() {
-    alert("✅ No API keys needed - Direct upload enabled!");
-    toggleSettings();
-}
-
 function resetChat() { 
     if(confirm("Clear all chat and reset?")) { 
         if (els.chat) els.chat.innerHTML = '';
@@ -381,3 +542,10 @@ if (els.input) {
         }
     });
 }
+
+// Close search modal on escape
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !els.searchModal?.classList.contains('hidden')) {
+        closeSearchModal();
+    }
+});
