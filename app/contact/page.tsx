@@ -17,8 +17,8 @@ const contactMethods = [
   {
     icon: Mail,
     title: "Email",
-    description: "contact@frn-ai.com",
-    href: "mailto:contact@frn-ai.com",
+    description: "ffjisan804@gmail.com",
+    href: "mailto:ffjisan804@gmail.com",
   },
   {
     icon: MessageCircle,
@@ -51,18 +51,45 @@ export default function ContactPage() {
     e.preventDefault()
     setLoading(true)
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    try {
+      // Send to backend API
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          message,
+        }),
+      })
 
-    toast({
-      title: "Message sent!",
-      description: "We'll get back to you as soon as possible.",
-    })
+      const data = await response.json()
 
-    setName("")
-    setEmail("")
-    setMessage("")
-    setLoading(false)
+      if (data.success) {
+        toast({
+          title: "Message sent!",
+          description: "We'll get back to you as soon as possible.",
+        })
+        setName("")
+        setEmail("")
+        setMessage("")
+      } else {
+        toast({
+          title: "Error",
+          description: data.error || "Failed to send message",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("Contact form error:", error)
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
