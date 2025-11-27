@@ -1,302 +1,336 @@
-# 🤖 Anbu AI
+# 🚀 FRN AI - Advanced Multi-Model AI Platform
 
-A modern, multilingual AI interface platform powered by Next.js 16, featuring advanced chat capabilities and image generation.
+A modern, feature-rich AI platform featuring chat, image generation, voice assistance, and image editing. Built with Next.js 16, powered by free open-source AI APIs.
 
-[![Next.js](https://img.shields.io/badge/Next.js-16.0.4-black)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19.2.0-blue)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1.17-38bdf8)](https://tailwindcss.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+**Live Demo:** [Deploy to Vercel](#deploying-to-vercel)
+
+---
 
 ## ✨ Features
 
-- 🌐 **Multilingual Support** - 5 languages (English, Bengali, Japanese, Vietnamese, Hindi)
-- 💬 **AI Chat Interface** - Advanced conversational AI with multiple models
-- 🎨 **Image Generation** - AI-powered image creation
-- 🎯 **Model Selection** - Choose from various AI models
-- 📱 **Responsive Design** - Works seamlessly on all devices
-- 🌙 **Dark Mode** - Built-in theme support
-- 📊 **Real-time Status** - Live system monitoring
-- 📝 **Auto-generated Changelog** - Git-based version history
-- 🔒 **API Obfuscation** - Built-in request/response encryption
-- ⚡ **Turbopack** - Lightning-fast development with Next.js 16
+- 💬 **AI Chat Interface** - Real-time conversations with multiple AI models
+- 🎨 **Image Generation** - Create images from text descriptions
+- 🎤 **Voice Assistant** - Speak to AI with speech recognition and text-to-speech
+- ✏️ **Image Editor** - Upload and edit images with AI enhancement
+- 🌐 **Multilingual Support** - 5+ languages (English, Bengali, Japanese, Vietnamese, Hindi)
+- 🌙 **Dark Mode** - Built-in theme switching
+- 📱 **Fully Responsive** - Works seamlessly on all devices
+- ✅ **100% Free APIs** - No API keys required, completely open-source
+- ⚡ **Lightning Fast** - Powered by Next.js 16 with Turbopack
 
-## 🚀 Quick Start
+---
 
-### Installation
+## 🎯 What's Different
+
+✅ **Created by Gtajisan** - A powerful AI platform tailored for accessibility and performance
+✅ **Multiple Free AI Providers** - Groq, HuggingFace, Unsplash, Pixabay, Pexels
+✅ **No Authentication** - Start using immediately without sign-up
+✅ **Production Ready** - Optimized for Vercel deployment
+✅ **Modern UI** - Clean, responsive design with Radix UI components
+
+---
+
+## 🛠 Tech Stack
+
+- **Frontend:** Next.js 16.0.4, React 19.2.0, TypeScript 5.9.3
+- **Styling:** Tailwind CSS 4.1.17, Radix UI Components
+- **Icons:** Lucide React
+- **State Management:** React Context
+- **Package Manager:** npm/pnpm
+- **Deployment:** Vercel, Edge Runtime Ready
+
+---
+
+## 📦 Installation
+
+### Prerequisites
+- Node.js 18+ 
+- npm or pnpm
+
+### Local Setup
 
 ```bash
-git clone https://github.com/anbuinfosec/anbuai
-```
+# Clone the repository
+git clone https://github.com/yourusername/frn-ai.git
+cd frn-ai
 
-### Development
-
-```bash
 # Install dependencies
 npm install
+# or
+pnpm install
 
 # Run development server
 npm run dev
-
-# Or use the start script
-npm start
+# or
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-### Build
+---
 
+## 🚀 Deploying to Vercel
+
+### Option 1: One-Click Deploy
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyourusername%2Ffrn-ai&project-name=frn-ai&repo-name=frn-ai)
+
+### Option 2: Manual Deployment
+
+1. **Push to GitHub**
 ```bash
-# Create production build
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/yourusername/frn-ai.git
+git push -u origin main
+```
+
+2. **Connect to Vercel**
+   - Go to [vercel.com](https://vercel.com)
+   - Click "New Project"
+   - Import your GitHub repository
+   - Framework: **Next.js**
+   - Click "Deploy"
+
+3. **Environment Variables** (if needed)
+   - No environment variables required for free tier!
+   - All APIs are public and don't require authentication
+
+### Vercel Project Settings
+
+```
+Framework: Next.js
+Build Command: npm run build
+Start Command: npm start
+Node.js Version: 18.x or higher
+```
+
+---
+
+## 📖 Available Routes
+
+### Main Pages
+- `/` - Home page with features
+- `/playground` - Interactive AI chat interface
+- `/image-editor` - Image generation and editing
+- `/voice-assistant` - Voice-based AI interaction
+- `/models` - Available AI models list
+- `/docs` - API documentation
+- `/about` - About FRN AI
+- `/contact` - Contact information
+- `/privacy` - Privacy policy
+- `/terms` - Terms of service
+
+### API Endpoints
+- `POST /api/chat` - Chat with AI
+- `POST /api/image` - Generate images
+- `POST /api/voice` - Voice processing
+- `POST /api/edit-image` - Edit images
+- `POST /api/upload` - Upload images
+
+---
+
+## 🎮 Usage Examples
+
+### Chat API
+```bash
+curl -X POST http://localhost:3000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "What is machine learning?",
+    "model": "gpt-3.5"
+  }'
+```
+
+### Image Generation API
+```bash
+curl -X POST http://localhost:3000/api/image \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "A beautiful sunset over mountains",
+    "size": "1:1"
+  }'
+```
+
+### Voice Assistant API
+```bash
+curl -X POST http://localhost:3000/api/voice \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Tell me about artificial intelligence"
+  }'
+```
+
+---
+
+## 🌍 AI Providers Used
+
+### Chat Models
+- **Groq API** - Free, unlimited requests, no auth
+- **HuggingFace Inference** - Free tier, open models
+
+### Image Generation
+- **Unsplash** - Stock photos (free)
+- **HuggingFace Diffusers** - AI image generation (free)
+- **Pixabay** - Stock images (free)
+- **Pexels** - Stock photos (free)
+
+### Voice
+- **Browser Web Speech API** - Native speech recognition
+- **Text-to-Speech** - Browser built-in
+
+---
+
+## 🔧 Development
+
+### Build for Production
+```bash
 npm run build
-
-# Start production server
-npm run prod
+npm start
 ```
 
-## 📦 Tech Stack
-
-- **Framework:** Next.js 16.0.4 (App Router + Turbopack)
-- **Language:** TypeScript 5.9.3
-- **Styling:** Tailwind CSS 4.1.17
-- **UI Components:** Radix UI
-- **Icons:** Lucide React
-- **State Management:** React Context + Zustand
-- **Package Manager:** pnpm
-
-## 🏗️ Project Structure
-
+### Linting
+```bash
+npm run lint
 ```
-anbuai/
-├── app/                      # Next.js App Router pages
+
+### Project Structure
+```
+frn-ai/
+├── app/                      # Next.js App Router
 │   ├── api/                  # API routes
-│   │   ├── chat/            # Chat API endpoint
-│   │   ├── image/           # Image generation API
-│   │   ├── status/          # System status API
-│   │   └── changelog/       # Git changelog API
-│   ├── playground/          # Interactive AI playground
+│   │   ├── chat/            # Chat endpoint
+│   │   ├── image/           # Image generation
+│   │   ├── voice/           # Voice processing
+│   │   ├── edit-image/      # Image editing
+│   │   └── upload/          # File upload
+│   ├── playground/          # Chat interface
+│   ├── image-editor/        # Image editor page
+│   ├── voice-assistant/     # Voice assistant page
+│   ├── models/              # Models listing
 │   ├── docs/                # Documentation
-│   ├── models/              # Model information
 │   ├── about/               # About page
-│   └── contact/             # Contact page
+│   └── layout.tsx           # Root layout
 ├── components/              # React components
-│   ├── ui/                  # Reusable UI components
-│   ├── playground/          # Playground-specific components
-│   └── docs/                # Documentation components
+│   ├── ui/                  # UI components (Radix)
+│   ├── playground/          # Playground components
+│   ├── header.tsx           # Navigation header
+│   ├── footer.tsx           # Footer
+│   ├── voice-assistant.tsx  # Voice component
+│   ├── image-editor.tsx     # Image editor component
+│   └── ...
 ├── lib/                     # Utility functions
 │   ├── i18n.tsx            # Internationalization
-│   ├── chat-store.ts       # Chat state management
-│   ├── obfuscator.ts       # API encryption utility
-│   └── utils.ts            # Helper functions
-├── hooks/                   # Custom React hooks
+│   └── utils.ts            # Helpers
 ├── public/                  # Static assets
-└── styles/                  # Global styles
-
+├── styles/                  # Global styles
+└── package.json            # Dependencies
 ```
 
-## 🌍 Supported Languages
+---
 
+## 📱 Responsive Design
+
+- ✅ Mobile-first approach
+- ✅ Desktop optimization
+- ✅ Tablet support
+- ✅ Dark mode by default
+- ✅ Touch-friendly interface
+
+---
+
+## 🌐 Internationalization
+
+Supported languages:
 - 🇬🇧 English
 - 🇧🇩 Bengali (বাংলা)
 - 🇯🇵 Japanese (日本語)
 - 🇻🇳 Vietnamese (Tiếng Việt)
 - 🇮🇳 Hindi (हिंदी)
 
-Language preferences are automatically saved to localStorage.
-
-## 🎮 Available Models
-
-### Chat Models
-- GPT-4 Turbo
-- GPT-3.5 Turbo
-- Claude 3 Opus
-- Claude 3 Sonnet
-- Gemini Pro
-- Llama 2
-
-### Image Models
-- DALL-E 3
-- Stable Diffusion XL
-- Midjourney
-- Stable Diffusion 2.1
-
-## 📡 API Endpoints
-
-### Chat API
-```bash
-POST /api/chat
-Content-Type: application/json
-
-{
-  "messages": [
-    { "role": "user", "content": "Hello!" }
-  ],
-  "model": "gpt-4-turbo"
-}
-```
-
-### Image Generation API
-```bash
-POST /api/image
-Content-Type: application/json
-
-{
-  "prompt": "A beautiful sunset",
-  "model": "dall-e-3"
-}
-```
-
-### Status API
-```bash
-GET /api/status
-```
-
-### Changelog API
-```bash
-# Fetch changelog from GitHub repository
-GET /api/changelog?repo=owner/repo
-
-# Example response
-{
-  "changelog": [
-    {
-      "date": "2025-11-25",
-      "commits": [...]
-    }
-  ],
-  "totalCommits": 50,
-  "repository": "owner/repo",
-  "timestamp": "2025-11-25T12:00:00.000Z"
-}
-```
-
-## 🔧 Configuration
-
-### Environment Variables
-
-Create a `.env.local` file in the root directory:
-
-```env
-# API Keys
-OPENAI_API_KEY=your_openai_api_key
-ANTHROPIC_API_KEY=your_anthropic_api_key
-GOOGLE_API_KEY=your_google_api_key
-
-# GitHub Configuration (for Changelog)
-GITHUB_REPO=owner/repo
-GITHUB_TOKEN=ghp_your_token  # Optional, for higher rate limits
-NEXT_PUBLIC_GITHUB_REPO=owner/repo
-
-# Optional
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
-
-**GitHub Token Setup:**
-1. Go to [GitHub Settings → Tokens](https://github.com/settings/tokens)
-2. Generate a new token with `repo` scope
-3. Add it to your `.env.local` file
-
-Without a token, you'll be limited to 60 requests/hour. With a token, you get 5,000 requests/hour.
-
-### Tailwind Configuration
-
-Customize theme in `tailwind.config.js`:
-
-```js
-module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        primary: "hsl(var(--primary))",
-        // Add your custom colors
-      },
-    },
-  },
-}
-```
-
-## 🛠️ Development Tools
-
-### Code Quality
-- **TypeScript** - Static type checking
-- **ESLint** - Code linting
-- **Prettier** - Code formatting (recommended)
-
-### Scripts
-
-```bash
-npm run dev          # Start development server
-npm start            # Alias for npm run dev
-npm run build        # Build for production
-npm run prod         # Start production server
-npm run lint         # Run ESLint
-```
-
-## 📊 Monitoring
-
-### Status Page
-Visit `/status` to view:
-- System health
-- API availability
-- Memory usage
-- Uptime statistics
-- Recent incidents
-
-### Changelog
-Visit `/changelog` to view:
-- GitHub commit history
-- File change statistics
-- Author information
-- Detailed commit messages
-
-**Note:** Requires `GITHUB_REPO` environment variable to be set.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Commit Message Guidelines
-
-- Use present tense ("Add feature" not "Added feature")
-- Use imperative mood ("Move cursor to..." not "Moves cursor to...")
-- Limit first line to 72 characters
-- Reference issues and pull requests
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [Next.js](https://nextjs.org/) - React framework
-- [Vercel](https://vercel.com/) - Deployment platform
-- [Radix UI](https://www.radix-ui.com/) - UI components
-- [Tailwind CSS](https://tailwindcss.com/) - Styling
-- [Lucide](https://lucide.dev/) - Icons
-
-## 📞 Support
-
-- 📧 Email: support@anbuai.com
-- 💬 Telegram: [Join our community](https://t.me/anbuai)
-- 🐛 Issues: [GitHub Issues](https://github.com/anbuai/anbuai/issues)
-
-## 🗺️ Roadmap
-
-- [ ] Voice input/output
-- [ ] File upload support
-- [ ] Code execution environment
-- [ ] Custom model training
-- [ ] API rate limiting
-- [ ] User authentication
-- [ ] Usage analytics
-- [ ] Mobile app
+Language preference is automatically saved to localStorage.
 
 ---
 
-Made with ❤️ by @anbuinfosec
+## 🔒 Privacy & Security
+
+- ✅ No user registration required
+- ✅ No data stored on servers (all processing is stateless)
+- ✅ Local storage for chat history (browser-side only)
+- ✅ HTTPS enforced on Vercel
+- ✅ No tracking cookies
+- ✅ Open-source and transparent
+
+See [Privacy Policy](/privacy) for details.
+
+---
+
+## 📞 Support & Contact
+
+**Developer:** Gtajisan
+
+### Connect With Me:
+- 🐙 [GitHub](https://github.com/frnwot)
+- 💬 [Telegram](https://t.me/FARHAN_MUH_TASIM)
+- 🎬 [YouTube](https://youtube.com/@zerox-farhan)
+- 📸 [Instagram](https://www.instagram.com/frn_prime/)
+- 👨‍💼 [LinkedIn](https://linkedin.com/in/jisan-ff)
+- 🎨 [CodePen](https://codepen.io/jisan-ff)
+- 📢 [Telegram Community](https://t.me/Farhan_build_discussion)
+- 📧 [Email](mailto:contact@frn-ai.com)
+
+---
+
+## 📄 License
+
+This project is open-source and available under the MIT License. See [LICENSE](LICENSE) file for details.
+
+---
+
+## 🎉 Getting Started Quick Links
+
+- 🏠 [Home Page](http://localhost:3000)
+- 🤖 [Chat Interface](http://localhost:3000/playground)
+- 🎨 [Image Generator](http://localhost:3000/playground)
+- 🎤 [Voice Assistant](http://localhost:3000/voice-assistant)
+- ✏️ [Image Editor](http://localhost:3000/image-editor)
+- 📚 [Documentation](http://localhost:3000/docs)
+
+---
+
+## 🚀 Deployment Checklist
+
+Before deploying to Vercel, ensure:
+
+- [ ] Repository pushed to GitHub
+- [ ] All dependencies installed: `npm install`
+- [ ] Build succeeds locally: `npm run build`
+- [ ] No environment variables needed (all free APIs)
+- [ ] Tests pass: `npm run lint`
+- [ ] README updated with your details
+- [ ] Social links updated in `components/footer.tsx`
+- [ ] Contact information updated in `app/contact/page.tsx`
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to:
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+---
+
+## ⭐ Star This Project
+
+If you find FRN AI useful, please consider giving it a star on GitHub!
+
+---
+
+**Made with ❤️ by Gtajisan**
+
+Last Updated: November 2025
