@@ -136,7 +136,7 @@ async function uploadAsDataURL(file) {
     });
 }
 
-// --- Send Edit Request to API ---
+// --- Send Edit Request to API (with retry) ---
 async function sendMessage() {
     const text = els.input?.value.trim();
     if (!text || state.isProcessing) return;
@@ -152,13 +152,8 @@ async function sendMessage() {
     const loadId = showLoading();
 
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
-        
-        // Use image URL as-is (must be HTTP URL, not data URL)
+        // Validate URL before trying
         const imageUrlForAPI = state.imageUrl;
-        
-        // Validate URL
         if (!imageUrlForAPI.startsWith('http')) {
             throw new Error("Image URL is not accessible (data URL detected). Try uploading again.");
         }
@@ -170,37 +165,60 @@ async function sendMessage() {
             imageUrl: imageUrlForAPI.substring(0, 60) + '...'
         });
         
-        const res = await fetch(apiUrl, {
-            method: 'GET',
-            signal: controller.signal,
-            headers: { 'Accept': 'application/json' }
-        });
-        
-        clearTimeout(timeoutId);
-        
-        const data = await res.json();
-        removeLoading(loadId);
+        // Try up to 2 times with retry
+        let lastError = null;
+        for (let attempt = 1; attempt <= 2; attempt++) {
+            try {
+                if (attempt > 1) {
+                    console.log(`🔁 Retry ${attempt}/2 in 2 seconds...`);
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                }
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 90000); // 90s per attempt
+                
+                const res = await fetch(apiUrl, {
+                    method: 'GET',
+                    signal: controller.signal,
+                    headers: { 'Accept': 'application/json' }
+                });
+                
+                clearTimeout(timeoutId);
+                
+                const data = await res.json();
+                console.log('📦 API Response:', data);
 
-        console.log('📦 API Response:', data);
-
-        if (data.imageUrl && data.imageUrl.includes('http')) {
-            console.log('✅ Got result from API');
-            appendBotMessage("✨ Here's your edited image:", data.imageUrl);
-            state.imageUrl = data.imageUrl;
-            showContextBar(data.imageUrl, "Keep editing? Click image or type new prompt");
-        } else if (data.error) {
-            throw new Error(`API Error: ${data.error}`);
-        } else if (data.success === false) {
-            throw new Error(data.message || "API request failed");
-        } else {
-            throw new Error("Invalid API response - no image URL returned");
+                if (data.imageUrl && data.imageUrl.includes('http')) {
+                    console.log('✅ Got result from API');
+                    removeLoading(loadId);
+                    appendBotMessage("✨ Here's your edited image:", data.imageUrl);
+                    state.imageUrl = data.imageUrl;
+                    showContextBar(data.imageUrl, "Keep editing? Click image or type new prompt");
+                    return;
+                } else if (data.error) {
+                    throw new Error(`API Error: ${data.error}`);
+                } else if (data.success === false) {
+                    throw new Error(data.message || "API request failed");
+                } else {
+                    throw new Error("No image URL in response");
+                }
+            } catch (err) {
+                lastError = err;
+                if (attempt === 2 || err.name !== 'AbortError') {
+                    throw err; // Don't retry non-timeout errors
+                }
+                // Continue to retry on AbortError (timeout)
+            }
         }
+        
+        throw lastError || new Error("API request failed");
+        
     } catch (err) {
         removeLoading(loadId);
         
         let errorMsg = err.message;
         if (err.name === 'AbortError') {
-            errorMsg = "⏱️ API processing took too long\n\nTry: simpler prompt, smaller image, or wait a moment";
+            errorMsg = "⏱️ API is processing slowly (timeout)\n\n💡 Try: simpler prompt, wait & retry";
         }
         
         console.error('❌ Error:', err);
