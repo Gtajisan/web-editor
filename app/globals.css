@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 3%;
+  --foreground: 0 0% 98%;
+  --card: 0 0% 10%;
+  --card-foreground: 0 0% 98%;
+  --primary: 6 93% 52%;
+  --muted: 0 0% 25%;
+  --muted-foreground: 0 0% 60%;
+  --ring: 6 93% 52%;
+}
+
+* {
+  @apply border-slate-700;
+}
+
+body {
+  @apply bg-slate-950 text-slate-50;
+}
+
+input[type="range"] {
+  @apply accent-cyan-500;
+}
