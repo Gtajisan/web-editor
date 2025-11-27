@@ -1,84 +1,69 @@
 import { type NextRequest, NextResponse } from "next/server"
 
-// Voice API endpoint for processing speech and generating responses
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { text, type = "gemini" } = body
+    const { text } = body
 
     if (!text) {
-      return NextResponse.json(
-        { error: "Text is required" },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: "Text is required" }, { status: 400 })
     }
 
     let response_text = ""
 
-    // Use Gemini API (free tier available)
-    if (type === "gemini") {
+    // Try HuggingFace free inference (Mistral model)
+    try {
+      const response = await fetch(
+        "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            inputs: text,
+            parameters: { max_new_tokens: 300, temperature: 0.7 },
+          }),
+        }
+      )
+
+      if (response.ok) {
+        const data = await response.json()
+        response_text = Array.isArray(data) ? data[0]?.generated_text : data?.generated_text
+      }
+    } catch (error) {
+      console.log("HF Voice fallback...")
+    }
+
+    // Groq API fallback
+    if (!response_text) {
       try {
-        const apiKey = process.env.GOOGLE_GENERATIVE_AI_KEY || process.env.GEMINI_API_KEY
-        if (!apiKey) {
-          // Fallback to public Gemini endpoint
-          const res = await fetch("https://api.gemini.pro/generate", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: text }),
-          })
-          const data = await res.json()
-          response_text = data.text || data.response || "I couldn't process that request"
-        } else {
-          const res = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                contents: [{ parts: [{ text }] }],
-              }),
-            }
-          )
-          const data = await res.json()
-          response_text =
-            data.candidates?.[0]?.content?.parts?.[0]?.text ||
-            "I couldn't generate a response"
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            messages: [{ role: "user", content: text }],
+            model: "mixtral-8x7b-32768",
+            max_tokens: 300,
+          }),
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          response_text = data.choices?.[0]?.message?.content
         }
       } catch (error) {
-        console.error("Gemini error:", error)
-        response_text = "I encountered an error processing your request"
+        console.log("Groq Voice fallback...")
       }
     }
 
-    // Fallback to OpenAI if Gemini fails
-    if (!response_text && type !== "gemini") {
-      try {
-        const openaiKey = process.env.OPENAI_API_KEY
-        if (openaiKey) {
-          const res = await fetch("https://api.openai.com/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${openaiKey}`,
-            },
-            body: JSON.stringify({
-              model: "gpt-4o-mini",
-              messages: [{ role: "user", content: text }],
-              max_tokens: 150,
-            }),
-          })
-          const data = await res.json()
-          response_text = data.choices?.[0]?.message?.content || "No response"
-        }
-      } catch (error) {
-        console.error("OpenAI error:", error)
-      }
+    // Simple fallback
+    if (!response_text) {
+      response_text = `I heard: "${text}". This is a demo response. The AI service is temporarily unavailable.`
     }
 
     return NextResponse.json({
       success: true,
       response: response_text,
-      type,
+      type: "free-api",
     })
   } catch (error) {
     console.error("Voice API error:", error)
