@@ -1,6 +1,7 @@
 // --- Configuration ---
 const NANO_API = "https://tawsif.is-a.dev/gemini/nano-banana";
 const GITHUB_USER = "Gtajisan";
+const API_TIMEOUT = 30000; // 30 second timeout
 
 // --- DOM Elements ---
 const els = {
@@ -106,26 +107,46 @@ async function sendMessage() {
     const loadId = showLoading();
 
     try {
-        const apiUrl = `${NANO_API}?prompt=${encodeURIComponent(text)}&url=${encodeURIComponent(state.imageUrl)}`;
-        const res = await fetch(apiUrl);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
         
-        if (!res.ok) throw new Error(`API Error: ${res.status}`);
+        const apiUrl = `${NANO_API}?prompt=${encodeURIComponent(text)}&url=${encodeURIComponent(state.imageUrl)}`;
+        
+        const res = await fetch(apiUrl, {
+            method: 'GET',
+            signal: controller.signal,
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!res.ok) throw new Error(`API returned status ${res.status}`);
         
         const data = await res.json();
         removeLoading(loadId);
 
         if (data.imageUrl) {
             appendBotMessage("Here is your edit:", data.imageUrl);
-            state.imageUrl = data.imageUrl; // Chain edit
+            state.imageUrl = data.imageUrl;
             showContextBar(data.imageUrl, "Editing this version...");
         } else if (data.error) {
             throw new Error(data.error);
         } else {
-            throw new Error("API returned no image.");
+            throw new Error("API returned invalid response");
         }
     } catch (err) {
         removeLoading(loadId);
-        appendBotMessage("❌ Error: " + (err.message || "Unknown error occurred"));
+        
+        let errorMsg = err.message;
+        if (err.name === 'AbortError') {
+            errorMsg = "Request timeout - API took too long to respond";
+        } else if (errorMsg.includes('fetch')) {
+            errorMsg = "Network error - Check API connection";
+        }
+        
+        appendBotMessage(`⚠️ ${errorMsg}\n\n📝 Tip: Make sure the API endpoint is accessible.`);
     } finally {
         enableInput();
         if (els.input) els.input.focus();
@@ -210,9 +231,28 @@ function appendBotMessage(text, imgUrl) {
     const div = document.createElement('div');
     div.className = "flex gap-3 fade-in";
     let content = `<span>${text}</span>`;
-    if(imgUrl) content += `<img src="${imgUrl}" class="chat-img mt-2 shadow-lg" alt="Edited image" onclick="window.open('${imgUrl}')">`;
+    if(imgUrl) {
+        content += `<img src="${imgUrl}" class="chat-img mt-2 shadow-lg cursor-pointer hover:opacity-80 transition" alt="Edited image" title="Click to edit this image">`;
+    }
     div.innerHTML = `<div class="bot-avatar shadow-sm">NB</div><div class="bot-bubble">${content}</div>`;
     els.chat.appendChild(div);
+    
+    // Add click handler to image for editing
+    if(imgUrl) {
+        const img = div.querySelector('img');
+        if(img) {
+            img.addEventListener('click', (e) => {
+                // Set context and focus input
+                state.imageUrl = imgUrl;
+                showContextBar(imgUrl, "Click input to edit this image");
+                if(els.input) {
+                    els.input.focus();
+                    els.input.placeholder = "Describe what you want to change...";
+                }
+            });
+        }
+    }
+    
     scrollToBottom();
 }
 
