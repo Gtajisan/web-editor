@@ -1,14 +1,22 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Zap, Radio, Wifi, Bluetooth, Radar, Activity, Cpu, Signal, AlertTriangle, Lock, Unlock } from 'lucide-react'
+import { Zap, Radio, Wifi, Bluetooth, Radar, AlertTriangle } from 'lucide-react'
+
+interface DeviceStatus {
+  ip?: string
+  uptime?: string
+  rssi?: number
+  freeHeap?: number
+  connected?: boolean
+}
 
 export default function Home() {
   const [isActive, setIsActive] = useState(false)
   const [mode, setMode] = useState('wifi')
   const [txPower, setTxPower] = useState(3)
   const [loading, setLoading] = useState(false)
-  const [deviceStatus, setDeviceStatus] = useState<any>(null)
+  const [deviceStatus, setDeviceStatus] = useState<DeviceStatus | null>(null)
   const [terminalOutput, setTerminalOutput] = useState<string[]>(['[SYSTEM] Ready...'])
   const [terminalInput, setTerminalInput] = useState('')
   const [scanProgress, setScanProgress] = useState(0)
@@ -38,10 +46,12 @@ export default function Home() {
   const fetchDeviceStatus = async () => {
     try {
       const response = await fetch('/api/device/status')
-      const data = await response.json()
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      const data: DeviceStatus = await response.json()
       setDeviceStatus(data)
     } catch (err) {
       console.error('Status fetch failed:', err)
+      setDeviceStatus({ connected: false })
     }
   }
 
@@ -57,15 +67,18 @@ export default function Home() {
           txPower
         })
       })
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
       const data = await response.json()
       if (data.success) {
         setIsActive(!isActive)
-        addTerminalOutput(`[${new Date().toLocaleTimeString()}] ${isActive ? '⏹ JAMMER DISARMED' : '▶ JAMMER ARMED'} | Mode: ${mode.toUpperCase()} | TX: ${txPower}`)
+        const newStatus = !isActive ? 'ARMED' : 'DISARMED'
+        addTerminalOutput(`[${new Date().toLocaleTimeString()}] ▶ JAMMER ${newStatus} | Mode: ${mode.toUpperCase()} | TX: ${txPower}`)
       } else {
-        addTerminalOutput(`[ERR] ${data.error}`)
+        addTerminalOutput(`[ERR] ${data.error || 'Unknown error'}`)
       }
     } catch (err) {
-      addTerminalOutput(`[ERR] Control failed`)
+      console.error('Jammer control error:', err)
+      addTerminalOutput(`[ERR] Control failed: ${err instanceof Error ? err.message : 'Unknown error'}`)
     } finally {
       setLoading(false)
     }
@@ -74,23 +87,25 @@ export default function Home() {
   const executeCommand = async () => {
     if (!terminalInput.trim()) return
     
-    addTerminalOutput(`$ ${terminalInput}`)
+    const cmd = terminalInput
+    addTerminalOutput(`$ ${cmd}`)
     setTerminalInput('')
     
     try {
       const response = await fetch('/api/terminal/execute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ command: terminalInput })
+        body: JSON.stringify({ command: cmd })
       })
       const data = await response.json()
       if (data.output) {
-        data.output.split('\n').forEach(line => addTerminalOutput(line))
+        data.output.split('\n').forEach((line: string) => addTerminalOutput(line))
       } else {
         addTerminalOutput(`[ERR] ${data.error}`)
       }
     } catch (err) {
-      addTerminalOutput(`[ERR] Execution failed`)
+      console.error('Command execution error:', err)
+      addTerminalOutput(`[ERR] Execution failed: ${err instanceof Error ? err.message : 'Unknown error'}`)
     }
   }
 

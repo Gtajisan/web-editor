@@ -2,10 +2,9 @@ import { NextResponse } from 'next/server'
 
 export async function GET() {
   try {
-    // Simulate device status
-    // In production, this would fetch from the ESP32 device
-    const uptime = Math.floor(Date.now() / 1000)
+    console.log('[📊 Device] Fetching status...')
     
+    const uptime = Math.floor(Date.now() / 1000)
     const status = {
       connected: true,
       device: 'ESP32-S3 DevKit',
@@ -17,9 +16,10 @@ export async function GET() {
       features: ['WiFi', 'BLE', 'Zigbee', 'Drones', 'OLED Display'],
     }
 
+    console.log('[✅ Device] Status retrieved')
     return NextResponse.json(status)
   } catch (error) {
-    console.error('[Device Status] Error:', error)
+    console.error('[❌ Device] Error:', error)
     return NextResponse.json(
       { connected: false, error: 'Unable to fetch device status' },
       { status: 500 }

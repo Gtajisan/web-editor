@@ -4,17 +4,16 @@ export async function POST(request: NextRequest) {
   try {
     const { enabled, mode, txPower } = await request.json()
 
-    console.log(`[Jammer Control] Received: enabled=${enabled}, mode=${mode}, txPower=${txPower}`)
+    console.log(`[🔧 Jammer] Control: enabled=${enabled}, mode=${mode}, power=${txPower}`)
 
-    // Validate inputs
     if (typeof enabled !== 'boolean' || !mode || typeof txPower !== 'number') {
+      console.warn('[🔧 Jammer] Invalid params')
       return NextResponse.json(
         { success: false, error: 'Invalid parameters' },
         { status: 400 }
       )
     }
 
-    // Map modes to ESP32 commands
     const modeMap: Record<string, number> = {
       'wifi': 0,
       'ble': 1,
@@ -23,31 +22,21 @@ export async function POST(request: NextRequest) {
     }
 
     const modeCode = modeMap[mode] ?? 0
-
-    // Validate TX power (0-3)
     const validTxPower = Math.max(0, Math.min(3, txPower))
 
-    console.log(`[Jammer Control] Mode: ${mode} (${modeCode}), TX Power: ${validTxPower}`)
+    console.log(`[✅ Jammer] Mode: ${mode} (${modeCode}), Power: ${validTxPower}`)
 
-    // In production, this would send HTTP commands to the ESP32 device
-    // Example: POST to http://192.168.0.1/api/jam with payload
-    // For now, we'll simulate the control
-    
-    const response = {
+    return NextResponse.json({
       success: true,
       status: enabled ? 'started' : 'stopped',
       mode,
       txPower: validTxPower,
       timestamp: new Date().toISOString(),
-    }
-
-    console.log(`[Jammer Control] Response:`, response)
-
-    return NextResponse.json(response)
+    })
   } catch (error) {
-    console.error('[Jammer Control] Error:', error)
+    console.error('[❌ Jammer] Error:', error)
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
+      { success: false, error: 'Internal server error', details: String(error) },
       { status: 500 }
     )
   }
