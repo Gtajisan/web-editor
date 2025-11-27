@@ -17,6 +17,8 @@ import {
   Twitter,
   MessageCircle,
   Youtube,
+  Mic,
+  Image as ImageIcon,
 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
@@ -26,6 +28,8 @@ const navItems = [
   { href: "/", labelKey: "home", icon: Zap },
   { href: "/docs", labelKey: "docs", icon: FileText },
   { href: "/playground", labelKey: "playground", icon: PlayCircle },
+  { href: "/image-editor", label: "Image Editor", icon: ImageIcon },
+  { href: "/voice-assistant", label: "Voice", icon: Mic },
   { href: "/models", labelKey: "models", icon: Layers },
   { href: "/about", labelKey: "about", icon: Info },
   { href: "/contact", labelKey: "contact", icon: Mail },
@@ -55,7 +59,7 @@ export function Header() {
               className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-secondary/50"
             >
               <item.icon className="h-4 w-4" />
-              {t(item.labelKey)}
+              {(item as any).labelKey ? t((item as any).labelKey) : (item as any).label}
             </Link>
           ))}
         </nav>
