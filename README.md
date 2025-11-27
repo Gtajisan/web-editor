@@ -1,141 +1,54 @@
-# ESP32 RF Jammer Control Panel
-
-Advanced RF jamming platform with web interface for controlling ESP32 wireless jammer modules.
-
-**Developer:** Gtajisan
+# ESPnRF24 Jammer
+A low-power 2,4GHz wireless jammer based on `ESP32` and `nRF24LO1+PA+LNA`
 
 ## Features
 
-✅ **Multi-Mode Jamming**
-- WiFi 2.4 GHz jamming
-- Bluetooth/BLE disruption
-- Zigbee interference
-- Drone signal jamming
-- Custom frequency ranges
-
-✅ **Web Control Interface**
-- Real-time status monitoring
-- Configurable TX power (0-30 dBm)
-- Mode selection dashboard
-- Terminal output display
-- Device statistics
-
-✅ **Hardware Integration**
-- ESP32-S3 DevKit C-1 compatible
-- 2x nRF24L01+PA+LNA modules
-- SSD1306 OLED display support (optional)
-- Captive portal functionality
-
-✅ **Terminal Integration**
-- FARHAN-Shot-v2 tool integration
-- Device command execution
-- Live output streaming
-- Status monitoring
+- A web interface for control and settings
+- Multiple jamming modes:
+  - WiFi (2.4 GHz)
+  - Bluetooth, BLE
+  - Zigbee
+  - Drones
+  - Custom frequency ranges
+- Configurable `TX` power in the interface
+- A captive portal to redirect user to the interface automatically
+- `SSD1306` OLED display support for basic status
+- Various configuration options
+- And more
 
 ## Hardware Requirements
 
-- **Microcontroller:** ESP32 (dual-core, 2 SPI buses, 1MB+ ROM)
-- **RF Modules:** 2x nRF24L01+PA+LNA
-- **Capacitors:** 2x 100µF electrolytic
-- **Display:** SSD1306 128x64 OLED (optional)
-- **Breadboard & wiring**
+For this project, i have used my cheap `esp32s3-devkitc-1`
 
-## Installation
+However any other `ESP32` board with these specs will work too:
+  - Dual-core chip
+  - Two usable SPI buses
+  - 1MB or more `ROM` + room for SPIFFS
 
-```bash
-# Clone repository
-git clone https://github.com/Gtajisan/esp32-jammer-control.git
-cd esp32-jammer-control
+For the componenets:
+  - 2x `nRF24L01+PA+LNA` modules
+  - 2x `100uF` electrolytic capacitors of any voltage
+  - Optionally, `SSD1306` OLED display (preferably `128x64`)
+  - Prototype/Bread board, and some wiring
 
-# Install dependencies
-npm install
+## Assembling
 
-# Run development server
-npm run dev
-```
+- Solder the capacitors across the `VCC` and `GND` pins of each `nRF24` module
+- Wire the display/radio modules to your `ESP32` board according to the pinout
+and your pin configuration in `include/options.h`
 
-Visit `http://localhost:3000` in your browser.
+## Building
 
-## API Endpoints
+1. Install VSCode and PlatformIO
+2. Edit preferences in `include/options.h`
+3. If using a different board, port it into `platformio.ini`
+4. Upload the code, and the SPIFFS filesystem image via platform tasks
 
-### Jammer Control
-```
-POST /api/jammer/control
-Body: { enabled: boolean, mode: string, txPower: number }
-```
+## WebUI
+<img width="1080" height="512" alt="WebUI" src="https://github.com/user-attachments/assets/8e401b94-a49b-4b02-bb4f-1be372aa586a" />
 
-### Terminal Execution
-```
-POST /api/terminal/execute
-Body: { command: string, tool?: 'farhan-shot' | 'system' }
-```
+# Credits
+This code is my refactor of https://github.com/W0rthlessS0ul/nRF24_jammer with extra features
 
-### Device Status
-```
-GET /api/device/status
-```
-
-## Supported Jamming Modes
-
-| Mode | Frequency | Range |
-|------|-----------|-------|
-| WiFi | 2400-2500 MHz | Up to 50m |
-| Bluetooth/BLE | 2400-2483.5 MHz | Up to 30m |
-| Zigbee | 2400-2485 MHz | Up to 40m |
-| Drones | 2.4-5.8 GHz | Variable |
-
-## Security
-
-⚠️ This tool is for **educational and authorized testing only**. Unauthorized jamming is illegal.
-
-- All commands are whitelisted
-- Terminal execution is sandboxed
-- Device communication is encrypted
-
-## Project Structure
-
-```
-├── app/
-│   ├── page.tsx              # Main control interface
-│   ├── layout.tsx            # Root layout
-│   ├── globals.css           # Global styles
-│   └── api/
-│       ├── jammer/           # Jammer control API
-│       ├── terminal/         # Terminal execution API
-│       └── device/           # Device status API
-├── components/
-│   └── ui/                   # Reusable UI components
-├── package.json
-└── README.md
-```
-
-## Development
-
-### Tech Stack
-- **Frontend:** Next.js 16, React, TypeScript
-- **Backend:** Node.js API routes
-- **UI Components:** Radix UI, Tailwind CSS
-- **Icons:** Lucide React
-
-### Build for Production
-```bash
-npm run build
-npm start
-```
-
-## Credits
-
-**Developer:** Gtajisan
-- GitHub: [@Gtajisan](https://github.com/Gtajisan)
-
-Based on:
-- ESPnRF24-Jammer
-- FARHAN-Shot-v2
-
-## License
-
-Educational use only. Unauthorized use of jamming devices is illegal in most jurisdictions.
-
----
-
-**Last Updated:** November 2025
+> [!WARNING] 
+> This project is for educational and research purposes only. The use of radio frequency jammers is illegal in many countries. You are responsible for complying with all local laws. Misuse can result in severe legal penalties, including fines and imprisonment. The creators are not liable for any misuse.
