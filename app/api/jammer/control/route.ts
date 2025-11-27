@@ -1,37 +1,53 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { exec } from 'child_process'
-import { promisify } from 'util'
-
-const execAsync = promisify(exec)
-
-interface JammerRequest {
-  enabled: boolean
-  mode: string
-  txPower: number
-}
 
 export async function POST(request: NextRequest) {
   try {
-    const body: JammerRequest = await request.json()
-    const { enabled, mode, txPower } = body
+    const { enabled, mode, txPower } = await request.json()
 
-    console.log(`[Jammer Control] Mode: ${mode}, TX Power: ${txPower} dBm, Status: ${enabled ? 'ON' : 'OFF'}`)
+    console.log(`[Jammer Control] Received: enabled=${enabled}, mode=${mode}, txPower=${txPower}`)
 
-    // Simulate device control (in production, this would communicate with ESP32 via serial/network)
+    // Validate inputs
+    if (typeof enabled !== 'boolean' || !mode || typeof txPower !== 'number') {
+      return NextResponse.json(
+        { success: false, error: 'Invalid parameters' },
+        { status: 400 }
+      )
+    }
+
+    // Map modes to ESP32 commands
+    const modeMap: Record<string, number> = {
+      'wifi': 0,
+      'ble': 1,
+      'zigbee': 2,
+      'drone': 3,
+    }
+
+    const modeCode = modeMap[mode] ?? 0
+
+    // Validate TX power (0-3)
+    const validTxPower = Math.max(0, Math.min(3, txPower))
+
+    console.log(`[Jammer Control] Mode: ${mode} (${modeCode}), TX Power: ${validTxPower}`)
+
+    // In production, this would send HTTP commands to the ESP32 device
+    // Example: POST to http://192.168.0.1/api/jam with payload
+    // For now, we'll simulate the control
+    
     const response = {
       success: true,
-      status: enabled ? 'ACTIVE' : 'INACTIVE',
+      status: enabled ? 'started' : 'stopped',
       mode,
-      txPower,
+      txPower: validTxPower,
       timestamp: new Date().toISOString(),
-      message: `Jammer ${enabled ? 'started' : 'stopped'} in ${mode} mode`
     }
+
+    console.log(`[Jammer Control] Response:`, response)
 
     return NextResponse.json(response)
   } catch (error) {
-    console.error('Jammer control error:', error)
+    console.error('[Jammer Control] Error:', error)
     return NextResponse.json(
-      { success: false, error: 'Failed to control jammer' },
+      { success: false, error: 'Internal server error' },
       { status: 500 }
     )
   }

@@ -1,28 +1,30 @@
 import * as React from "react"
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'default' | 'outline'
   size?: 'sm' | 'md' | 'lg'
-  variant?: 'default' | 'outline' | 'ghost'
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, size = 'md', variant = 'default', ...props }, ref) => {
-    const sizeClasses = {
-      sm: 'px-2 py-1 text-sm',
-      md: 'px-4 py-2',
-      lg: 'px-6 py-3 text-lg'
+  ({ className, variant = 'default', size = 'md', ...props }, ref) => {
+    const baseStyles = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'
+    
+    const variants = {
+      default: 'bg-cyan-600 text-white hover:bg-cyan-700',
+      outline: 'border border-input bg-transparent hover:bg-accent hover:text-accent-foreground',
     }
 
-    const variantClasses = {
-      default: 'bg-primary text-white hover:opacity-90',
-      outline: 'border border-slate-700 text-slate-300 hover:bg-slate-800',
-      ghost: 'hover:bg-slate-800'
+    const sizes = {
+      sm: 'h-8 px-3 text-xs',
+      md: 'h-10 px-4 py-2',
+      lg: 'h-12 px-8 text-base',
     }
 
     return (
       <button
+        className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
         ref={ref}
-        className={`rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${sizeClasses[size]} ${variantClasses[variant]} ${className}`}
         {...props}
       />
     )

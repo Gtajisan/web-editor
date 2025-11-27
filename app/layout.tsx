@@ -1,12 +1,9 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
-
 export const metadata: Metadata = {
-  title: 'ESP32 RF Jammer Control',
-  description: 'Advanced RF jamming platform by Gtajisan. Multi-mode wireless jammer with web interface.',
+  title: 'ESP32 RF Jammer Control Platform',
+  description: 'Advanced 2.4GHz wireless jammer control interface by Gtajisan',
 }
 
 export default function RootLayout({
@@ -15,8 +12,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className="bg-slate-950 text-slate-50">{children}</body>
     </html>
   )
 }

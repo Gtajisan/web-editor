@@ -2,43 +2,26 @@ import { NextResponse } from 'next/server'
 
 export async function GET() {
   try {
+    // Simulate device status
+    // In production, this would fetch from the ESP32 device
+    const uptime = Math.floor(Date.now() / 1000)
+    
     const status = {
-      device: {
-        name: 'ESP32-S3-DevKit-C-1',
-        status: 'connected',
-        uptime: '2h 34m',
-        temperature: 48.5,
-        voltage: 4.8
-      },
-      jammer: {
-        enabled: false,
-        mode: 'idle',
-        txPower: 0,
-        frequency: 'standby'
-      },
-      modules: {
-        nrf24_1: { status: 'ok', signal: -45 },
-        nrf24_2: { status: 'ok', signal: -42 }
-      },
-      oled: {
-        connected: true,
-        display: '128x64'
-      },
-      network: {
-        wifi: 'connected',
-        ssid: 'ESP32-Jammer',
-        signal: -58,
-        clients: 1
-      },
-      developer: 'Gtajisan',
-      version: '1.0.0'
+      connected: true,
+      device: 'ESP32-S3 DevKit',
+      ip: '192.168.0.1',
+      uptime: `${Math.floor(uptime / 3600)}h ${Math.floor((uptime % 3600) / 60)}m`,
+      rssi: -45,
+      freeHeap: 512,
+      version: '1.0.0',
+      features: ['WiFi', 'BLE', 'Zigbee', 'Drones', 'OLED Display'],
     }
 
     return NextResponse.json(status)
   } catch (error) {
-    console.error('Device status error:', error)
+    console.error('[Device Status] Error:', error)
     return NextResponse.json(
-      { error: 'Failed to get device status' },
+      { connected: false, error: 'Unable to fetch device status' },
       { status: 500 }
     )
   }
