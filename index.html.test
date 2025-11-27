@@ -1,0 +1,6 @@
+<!-- Quick test - open browser console to see logs -->
+<script>
+fetch('http://localhost:5000/script.js')
+  .then(r => r.ok ? console.log('✅ Server OK') : console.log('⚠️ Check server'))
+  .catch(e => console.log('❌ Server issue:', e))
+</script>

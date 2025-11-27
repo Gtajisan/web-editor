@@ -1,7 +1,7 @@
 // --- Configuration ---
 const NANO_API = "https://tawsif.is-a.dev/gemini/nano-banana";
 const GITHUB_USER = "Gtajisan";
-const API_TIMEOUT = 60000; // 60 second timeout
+const API_TIMEOUT = 120000; // 120 second timeout (API is slow)
 const CORS_PROXY = "https://corsproxy.io/?";
 
 // --- DOM Elements ---
@@ -155,15 +155,20 @@ async function sendMessage() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
         
-        // Prepare image URL for API
-        let imageUrlForAPI = state.imageUrl;
-        if (imageUrlForAPI.startsWith('data:')) {
-            imageUrlForAPI = CORS_PROXY + encodeURIComponent(imageUrlForAPI);
+        // Use image URL as-is (must be HTTP URL, not data URL)
+        const imageUrlForAPI = state.imageUrl;
+        
+        // Validate URL
+        if (!imageUrlForAPI.startsWith('http')) {
+            throw new Error("Image URL is not accessible (data URL detected). Try uploading again.");
         }
         
         const apiUrl = `${NANO_API}?prompt=${encodeURIComponent(text)}&url=${encodeURIComponent(imageUrlForAPI)}`;
         
-        console.log('🔄 Sending to API...', { prompt: text, imageUrl: imageUrlForAPI.substring(0, 50) + '...' });
+        console.log('🔄 Sending to API...', { 
+            prompt: text.substring(0, 30),
+            imageUrl: imageUrlForAPI.substring(0, 60) + '...'
+        });
         
         const res = await fetch(apiUrl, {
             method: 'GET',
@@ -173,10 +178,10 @@ async function sendMessage() {
         
         clearTimeout(timeoutId);
         
-        if (!res.ok) throw new Error(`API error ${res.status}`);
-        
         const data = await res.json();
         removeLoading(loadId);
+
+        console.log('📦 API Response:', data);
 
         if (data.imageUrl && data.imageUrl.includes('http')) {
             console.log('✅ Got result from API');
@@ -184,20 +189,22 @@ async function sendMessage() {
             state.imageUrl = data.imageUrl;
             showContextBar(data.imageUrl, "Keep editing? Click image or type new prompt");
         } else if (data.error) {
-            throw new Error(data.error);
+            throw new Error(`API Error: ${data.error}`);
+        } else if (data.success === false) {
+            throw new Error(data.message || "API request failed");
         } else {
-            throw new Error("No image returned from API");
+            throw new Error("Invalid API response - no image URL returned");
         }
     } catch (err) {
         removeLoading(loadId);
         
         let errorMsg = err.message;
         if (err.name === 'AbortError') {
-            errorMsg = "⏱️ API took too long (timeout)";
+            errorMsg = "⏱️ API processing took too long\n\nTry: simpler prompt, smaller image, or wait a moment";
         }
         
         console.error('❌ Error:', err);
-        appendBotMessage(`${errorMsg}\n\nMake sure: 1) Image uploaded 2) API is reachable 3) Try a different prompt`);
+        appendBotMessage(`⚠️ ${errorMsg}`);
     } finally {
         enableInput();
         if (els.input) els.input.focus();
