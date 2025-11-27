@@ -77,7 +77,7 @@ export function ChatMessage({ id, role, content, onEdit, onDelete, onRegenerate 
       {/* Content */}
       <div className="flex-1 space-y-2 overflow-hidden">
         <div className="font-semibold text-sm flex items-center gap-2">
-          {role === "assistant" ? "Anbu AI" : "You"}
+          {role === "assistant" ? "FRN AI" : "You"}
           {role === "assistant" && (
             <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">AI</Badge>
           )}

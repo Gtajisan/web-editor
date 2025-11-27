@@ -63,7 +63,7 @@ const translations: Record<Language, Record<string, string>> = {
     newChat: "New Chat",
     chatHistory: "Chat History",
     clearHistory: "Clear History",
-    welcomeTitle: "Welcome to Anbu AI",
+    welcomeTitle: "Welcome to FRN AI",
     welcomeDesc: "Start a conversation with our AI assistant. Ask questions, get help with code, or explore ideas.",
 
     // Image
@@ -149,7 +149,7 @@ const translations: Record<Language, Record<string, string>> = {
     newChat: "নতুন চ্যাট",
     chatHistory: "চ্যাট ইতিহাস",
     clearHistory: "ইতিহাস মুছুন",
-    welcomeTitle: "Anbu AI তে স্বাগতম",
+    welcomeTitle: "FRN AI তে স্বাগতম",
     welcomeDesc: "আমাদের AI সহায়কের সাথে একটি কথোপকথন শুরু করুন। প্রশ্ন জিজ্ঞাসা করুন, কোডের সাহায্য পান বা ধারণা অন্বেষণ করুন।",
     prompt: "প্রম্পট",
     style: "স্টাইল",
@@ -350,7 +350,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [language, setLanguage] = useState<Language>("en")
 
   useEffect(() => {
-    const saved = localStorage.getItem("anbu-language") as Language
+    const saved = localStorage.getItem("frn-language") as Language
     if (saved && translations[saved]) {
       setLanguage(saved)
     }
@@ -358,7 +358,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const handleSetLanguage = (lang: Language) => {
     setLanguage(lang)
-    localStorage.setItem("anbu-language", lang)
+    localStorage.setItem("frn-language", lang)
   }
 
   const t = (key: string): string => {

@@ -12,7 +12,7 @@ export function HeroSection() {
   
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText("npm i anbuai")
+      await navigator.clipboard.writeText("npm i frn-ai")
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch (err) {
@@ -49,7 +49,7 @@ export function HeroSection() {
             <div className="flex items-center gap-2 md:gap-3 rounded-lg border border-border/50 bg-muted/50 backdrop-blur-sm px-3 md:px-4 py-2 font-mono text-xs md:text-sm overflow-x-auto max-w-full hover:bg-muted/70 transition-all duration-300">
               <code className="whitespace-nowrap">
                 <span className="text-muted-foreground/70 select-none">$</span>{" "}
-                <span className="text-foreground font-semibold">npm i anbuai</span>
+                <span className="text-foreground font-semibold">npm i frn-ai</span>
               </code>
               <button 
                 onClick={handleCopy}

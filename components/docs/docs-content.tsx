@@ -5,9 +5,9 @@ export function DocsContent() {
   return (
     <div className="prose prose-invert max-w-none">
       <section id="introduction" className="mb-16">
-        <h1 className="text-4xl font-bold mb-4">Anbu AI Documentation</h1>
+        <h1 className="text-4xl font-bold mb-4">FRN AI Documentation</h1>
         <p className="text-lg text-muted-foreground mb-6">
-          Anbu AI is an open-source platform for building AI applications. Access powerful language models and image
+          FRN AI is an open-source platform for building AI applications. Access powerful language models and image
           generation APIs with simple REST endpoints.
         </p>
         <div className="flex gap-2 mb-8">

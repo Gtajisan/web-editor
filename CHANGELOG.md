@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2025-11-25
 
 ### Added
-- Initial release of Anbu AI platform
+- Initial release of FRN AI platform
 - Next.js 16 with Turbopack support
 - Multilingual support (5 languages: English, Bengali, Japanese, Vietnamese, Hindi)
 - AI chat interface with multiple model support

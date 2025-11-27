@@ -37,7 +37,7 @@ export default function ChangelogPage() {
     const fetchChangelog = async () => {
       try {
         // Try to get repository from environment or use query parameter
-        const repo = process.env.NEXT_PUBLIC_GITHUB_REPO || "anbuinfosec/anbuai"
+        const repo = process.env.NEXT_PUBLIC_GITHUB_REPO || "frnwot/frn-ai"
         const response = await fetch(`/api/changelog?repo=${encodeURIComponent(repo)}`)
         if (response.ok) {
           const data = await response.json()

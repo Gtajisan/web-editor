@@ -74,7 +74,7 @@ export default function TermsPage() {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4">7. Contact</h2>
-              <p className="text-muted-foreground">For questions about these terms, contact us at legal@anbusoft.com</p>
+              <p className="text-muted-foreground">For questions about these terms, contact us at ffjisan804@gmail.com</p>
             </section>
           </div>
         </div>

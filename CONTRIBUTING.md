@@ -1,6 +1,6 @@
-# Contributing to Anbu AI
+# Contributing to FRN AI
 
-First off, thank you for considering contributing to Anbu AI! It's people like you that make Anbu AI such a great tool.
+First off, thank you for considering contributing to FRN AI! It's people like you that make FRN AI such a great tool.
 
 ## Code of Conduct
 
@@ -43,10 +43,10 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 
 ```bash
 # Clone your fork
-git clone https://github.com/your-username/anbuai.git
+git clone https://github.com/your-username/frn-ai.git
 
 # Navigate to directory
-cd anbuai
+cd frn-ai
 
 # Install dependencies
 npm install
@@ -105,7 +105,7 @@ Use descriptive branch names:
 ## Project Structure
 
 ```
-anbuai/
+frn-ai/
 ├── app/              # Next.js pages and API routes
 ├── components/       # React components
 ├── lib/             # Utility functions and helpers
@@ -142,14 +142,14 @@ npm test -- --coverage
 
 ## Community
 
-- Join our [Telegram community](https://t.me/Anbusoft)
+- Join our [Telegram community](https://t.me/FARHAN_MUH_TASIM)
 - Follow us on social media
 
 ## Questions?
 
 Feel free to reach out:
 - Open a discussion on GitHub
-- Email us at anbuinfosec@gmail.com
+- Email us at ffjisan804@gmail.com
 - Join our Telegram channel
 
 Thank you for contributing! 🎉

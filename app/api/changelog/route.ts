@@ -71,7 +71,7 @@ export async function GET(request: Request) {
 
     const headers: HeadersInit = {
       "Accept": "application/vnd.github.v3+json",
-      "User-Agent": "Anbu-AI-Changelog",
+      "User-Agent": "FRN-AI-Changelog",
     }
 
     if (token) {

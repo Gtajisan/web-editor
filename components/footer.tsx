@@ -123,11 +123,11 @@ export function Footer() {
             {/* Contact */}
             <div className="mt-6">
               <a
-                href="mailto:anbuinfosec@gmail.com"
+                href="mailto:ffjisan804@gmail.com"
                 className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Mail className="h-4 w-4" />
-                anbuinfosec@gmail.com
+                ffjisan804@gmail.com
               </a>
             </div>
           </div>
@@ -136,9 +136,9 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground flex items-center gap-1">
-            {t("madeWith")} <Heart className="h-3 w-3 text-red-500 fill-red-500" /> {t("by")} Anbu Soft
+            {t("madeWith")} <Heart className="h-3 w-3 text-red-500 fill-red-500" /> {t("by")} Gtajisan
           </p>
-          <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} Anbu AI. {t("allRightsReserved")}</p>
+          <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} FRN AI. {t("allRightsReserved")}</p>
         </div>
       </div>
     </footer>

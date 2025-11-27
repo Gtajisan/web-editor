@@ -199,7 +199,7 @@ export default function StatusPage() {
             </div>
             <h1 className="text-3xl md:text-4xl font-bold mb-4">System Status</h1>
             <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-              Real-time status and uptime monitoring for all Anbu AI services
+              Real-time status and uptime monitoring for all FRN AI services
             </p>
             {statusData.timestamp && (
               <p className="text-sm text-muted-foreground mt-2">
@@ -229,7 +229,7 @@ export default function StatusPage() {
           <Card className="mb-12">
             <CardHeader>
               <CardTitle>Services Status</CardTitle>
-              <CardDescription>Current status of all Anbu AI services</CardDescription>
+              <CardDescription>Current status of all FRN AI services</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {statusData.services.map((service) => (

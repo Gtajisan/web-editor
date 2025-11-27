@@ -12,7 +12,7 @@ interface ServiceStatus {
 async function checkEndpoint(path: string): Promise<{ status: "operational" | "down"; responseTime: number }> {
   const startTime = Date.now()
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || `https://ai.anbuinfosec.live`
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || `https://frn-ai.vercel.app`
     const response = await fetch(`${baseUrl}${path}`, {
       method: "OPTIONS",
       headers: { "Content-Type": "application/json" },

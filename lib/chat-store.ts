@@ -23,9 +23,9 @@ export type GeneratedImage = {
   createdAt: number
 }
 
-const CHAT_STORAGE_KEY = "anbu-chat-sessions"
-const IMAGE_STORAGE_KEY = "anbu-generated-images"
-const CURRENT_SESSION_KEY = "anbu-current-session"
+const CHAT_STORAGE_KEY = "frn-chat-sessions"
+const IMAGE_STORAGE_KEY = "frn-generated-images"
+const CURRENT_SESSION_KEY = "frn-current-session"
 
 export function generateId(): string {
   return Math.random().toString(36).substring(2, 15) + Date.now().toString(36)

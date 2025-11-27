@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
 import { MessageCircle, X } from "lucide-react"
 
-const POPUP_STORAGE_KEY = "anbu-telegram-popup-last"
+const POPUP_STORAGE_KEY = "frn-telegram-popup-last"
 const POPUP_INTERVAL_DAYS = 10
 
 export function TelegramPopup() {
@@ -39,13 +39,13 @@ export function TelegramPopup() {
   }
 
   const handleJoin = () => {
-    window.open("https://t.me/anbuinfosec", "_blank")
+    window.open("https://t.me/FARHAN_MUH_TASIM", "_blank")
     handleClose()
   }
 
   const telegramImageUrl = isDark
-    ? "https://tginvite.pages.dev/anbuinfosec?style=discord&theme=dark&color=%235865f2"
-    : "https://tginvite.pages.dev/anbuinfosec?style=discord&theme=light&color=%235865f2"
+    ? "https://tginvite.pages.dev/FARHAN_MUH_TASIM?style=discord&theme=dark&color=%235865f2"
+    : "https://tginvite.pages.dev/FARHAN_MUH_TASIM?style=discord&theme=light&color=%235865f2"
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -61,7 +61,7 @@ export function TelegramPopup() {
         <div className="flex flex-col items-center text-center">
           {/* Telegram invite card image */}
           <div className="w-full mb-4 rounded-lg overflow-hidden">
-            <img src={telegramImageUrl || "/placeholder.svg"} alt="Anbu Soft Telegram" className="w-full h-auto" />
+            <img src={telegramImageUrl || "/placeholder.svg"} alt="FRN AI Telegram" className="w-full h-auto" />
           </div>
 
           <DialogHeader className="text-center">

@@ -146,22 +146,17 @@ export function Header() {
                   <p className="text-xs text-muted-foreground mb-4">Follow us</p>
                   <div className="flex items-center gap-2">
                     <Button variant="outline" size="icon" asChild>
-                      <a href="https://github.com/anbuinfosec" target="_blank" rel="noopener noreferrer">
+                      <a href="https://github.com/frnwot" target="_blank" rel="noopener noreferrer">
                         <Github className="h-4 w-4" />
                       </a>
                     </Button>
                     <Button variant="outline" size="icon" asChild>
-                      <a href="https://t.me/anbuinfosec" target="_blank" rel="noopener noreferrer">
+                      <a href="https://t.me/FARHAN_MUH_TASIM" target="_blank" rel="noopener noreferrer">
                         <MessageCircle className="h-4 w-4" />
                       </a>
                     </Button>
                     <Button variant="outline" size="icon" asChild>
-                      <a href="https://twitter.com/anbuinfosec" target="_blank" rel="noopener noreferrer">
-                        <Twitter className="h-4 w-4" />
-                      </a>
-                    </Button>
-                    <Button variant="outline" size="icon" asChild>
-                      <a href="https://youtube.com/@anbusoft" target="_blank" rel="noopener noreferrer">
+                      <a href="https://youtube.com/@zerox-farhan" target="_blank" rel="noopener noreferrer">
                         <Youtube className="h-4 w-4" />
                       </a>
                     </Button>

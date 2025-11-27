@@ -109,7 +109,7 @@ export default function AboutPage() {
               </div>
               <h2 className="text-2xl font-bold mb-4">Built with Love</h2>
               <p className="text-muted-foreground mb-6">
-                Anbu AI is built and maintained by AnbuSoft, a team passionate about making AI accessible to everyone.
+                FRN AI is built and maintained by Gtajisan, passionate about making AI accessible to everyone.
                 We&apos;re always looking for contributors and feedback.
               </p>
               <div className="flex items-center justify-center gap-4">
