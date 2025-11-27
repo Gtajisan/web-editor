@@ -73,22 +73,65 @@ if (els.fileInput) {
     });
 }
 
-// --- Smart Upload Strategy (No ImgBB Required) ---
+// --- Smart Upload Strategy ---
 async function handleUploadStrategy(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
+    try {
+        // Try free hosting services (no API key needed)
+        return await uploadToFreeService(file);
+    } catch (e) {
+        // Fallback: data URL for preview only (note: API won't accept this)
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = () => reject(new Error("Failed to read file"));
+            reader.readAsDataURL(file);
+        });
+    }
+}
+
+// Free image hosting (no API key needed)
+async function uploadToFreeService(file) {
+    // Strategy 1: Try 0x0.st (completely free, no limits)
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await fetch('https://0x0.st', { method: 'POST', body: formData });
+        const url = await res.text();
+        if (url.includes('http')) return url.trim();
+    } catch (e) {}
+    
+    // Strategy 2: Try Catbox via CORS
+    try {
+        const formData = new FormData();
+        formData.append('reqtype', 'fileupload');
+        formData.append('fileToUpload', file);
         
-        reader.onload = (e) => {
-            const dataUrl = e.target.result;
-            resolve(dataUrl);
-        };
+        const res = await fetch('https://catbox.moe/user/api.php', { 
+            method: 'POST', 
+            body: formData,
+            mode: 'cors'
+        });
+        const url = await res.text();
+        if (url.includes('http')) return url.trim();
+    } catch (e) {}
+    
+    // Strategy 3: Try PostImages (free, no key)
+    try {
+        const formData = new FormData();
+        formData.append('upload', file);
+        formData.append('type', 'file');
         
-        reader.onerror = () => {
-            reject(new Error("Failed to read file"));
-        };
-        
-        reader.readAsDataURL(file);
-    });
+        const res = await fetch('https://postimages.org/api/1/upload', { 
+            method: 'POST', 
+            body: formData 
+        });
+        const data = await res.json();
+        if (data.status === 200 && data.image?.url) {
+            return data.image.url;
+        }
+    } catch (e) {}
+    
+    throw new Error("Could not upload to any free service");
 }
 
 // --- Edit Logic ---
