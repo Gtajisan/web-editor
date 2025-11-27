@@ -3,8 +3,8 @@ import { Footer } from "@/components/footer"
 import { Badge } from "@/components/ui/badge"
 
 export const metadata = {
-  title: "Terms of Service - Anbu AI",
-  description: "Terms of service for Anbu AI platform",
+  title: "Terms of Service - FRN AI",
+  description: "Terms of service for FRN AI platform",
 }
 
 export default function TermsPage() {
@@ -22,7 +22,7 @@ export default function TermsPage() {
             <section>
               <h2 className="text-2xl font-semibold mb-4">1. Acceptance of Terms</h2>
               <p className="text-muted-foreground">
-                By accessing and using Anbu AI, you accept and agree to be bound by these Terms of Service. If you do
+                By accessing and using FRN AI, you accept and agree to be bound by these Terms of Service. If you do
                 not agree to these terms, please do not use our services.
               </p>
             </section>
@@ -30,7 +30,7 @@ export default function TermsPage() {
             <section>
               <h2 className="text-2xl font-semibold mb-4">2. Description of Service</h2>
               <p className="text-muted-foreground">
-                Anbu AI provides AI-powered text generation and image creation services through an open API platform.
+                FRN AI provides AI-powered text generation, image creation, and image editing services through an open API platform.
                 Our services are provided &quot;as is&quot; without warranties of any kind.
               </p>
             </section>
@@ -59,7 +59,7 @@ export default function TermsPage() {
             <section>
               <h2 className="text-2xl font-semibold mb-4">5. Limitation of Liability</h2>
               <p className="text-muted-foreground">
-                Anbu AI and its operators shall not be liable for any indirect, incidental, special, consequential, or
+                FRN AI and its operators shall not be liable for any indirect, incidental, special, consequential, or
                 punitive damages resulting from your use of our services.
               </p>
             </section>

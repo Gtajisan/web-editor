@@ -47,8 +47,8 @@ const imageModels = [
 ]
 
 export const metadata = {
-  title: "Models - Anbu AI",
-  description: "Explore available AI models for chat and image generation",
+  title: "Models - FRN AI",
+  description: "Explore available AI models for chat, image generation, and image editing on FRN AI platform",
 }
 
 export default function ModelsPage() {

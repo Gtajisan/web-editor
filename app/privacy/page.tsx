@@ -3,8 +3,8 @@ import { Footer } from "@/components/footer"
 import { Badge } from "@/components/ui/badge"
 
 export const metadata = {
-  title: "Privacy Policy - Anbu AI",
-  description: "Privacy policy for Anbu AI platform",
+  title: "Privacy Policy - FRN AI",
+  description: "Privacy policy for FRN AI platform",
 }
 
 export default function PrivacyPage() {
@@ -22,7 +22,7 @@ export default function PrivacyPage() {
             <section>
               <h2 className="text-2xl font-semibold mb-4">1. Information We Collect</h2>
               <p className="text-muted-foreground">
-                Anbu AI is designed with privacy in mind. We collect minimal data necessary to provide our services:
+                FRN AI is designed with privacy in mind. We collect minimal data necessary to provide our services:
               </p>
               <ul className="list-disc pl-6 text-muted-foreground space-y-2">
                 <li>Chat messages are processed but not permanently stored on our servers</li>
@@ -71,7 +71,7 @@ export default function PrivacyPage() {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4">6. Contact</h2>
-              <p className="text-muted-foreground">For privacy-related questions, contact us at privacy@anbusoft.com</p>
+              <p className="text-muted-foreground">For privacy-related questions, contact us at contact@frn-ai.com or reach out on Telegram @FARHAN_MUH_TASIM</p>
             </section>
           </div>
         </div>

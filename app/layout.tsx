@@ -11,17 +11,17 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Anbu AI - Open AI Platform",
+  title: "FRN AI - Advanced AI Platform",
   description:
-    "Open-source AI platform for text generation and image creation. Access GPT-4o, GPT-3.5, and image generation APIs. No login required.",
-  keywords: ["AI", "API", "GPT", "Image Generation", "Open Source", "Chatbot", "Text Generation"],
-  authors: [{ name: "Anbu Soft" }],
+    "Advanced AI platform with multiple AI models - OpenAI, Nano Banana, and more. Text generation, image creation, and image editing. No login required.",
+  keywords: ["AI", "API", "OpenAI", "Image Generation", "Image Editing", "Chatbot", "Text Generation", "Nano Banana"],
+  authors: [{ name: "Gtajisan" }],
   openGraph: {
-    title: "Anbu AI - Open AI Platform",
-    description: "Open-source AI platform for text generation and image creation.",
+    title: "FRN AI - Advanced AI Platform",
+    description: "Advanced AI platform with multiple AI models for text and image generation.",
     type: "website",
   },
-    generator: 'anbuinfosec.live'
+    generator: 'frn-ai.com'
 }
 
 export const viewport: Viewport = {

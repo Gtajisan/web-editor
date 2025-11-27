@@ -3,8 +3,8 @@ import { Footer } from "@/components/footer"
 import { PlaygroundInterface } from "@/components/playground/playground-interface"
 
 export const metadata = {
-  title: "Playground - Anbu AI",
-  description: "Try out Anbu AI models in the interactive playground",
+  title: "Playground - FRN AI",
+  description: "Try out FRN AI models with text chat, image generation, and image editing",
 }
 
 export default function PlaygroundPage() {

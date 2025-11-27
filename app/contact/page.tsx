@@ -17,26 +17,26 @@ const contactMethods = [
   {
     icon: Mail,
     title: "Email",
-    description: "anbuinfosec@gmail.com",
-    href: "mailto:anbuinfosec@gmail.com",
+    description: "contact@frn-ai.com",
+    href: "mailto:contact@frn-ai.com",
   },
   {
     icon: MessageCircle,
     title: "Telegram",
-    description: "@anbusoft",
-    href: "https://t.me/anbuinfosec",
+    description: "@FARHAN_MUH_TASIM",
+    href: "https://t.me/FARHAN_MUH_TASIM",
   },
   {
     icon: Github,
     title: "GitHub",
-    description: "github.com/anbuinfosec",
-    href: "https://github.com/anbuinfosec",
+    description: "github.com/frnwot",
+    href: "https://github.com/frnwot",
   },
   {
-    icon: Twitter,
-    title: "Twitter",
-    description: "@anbusoft",
-    href: "https://twitter.com/anbuinfosec",
+    icon: Mail,
+    title: "Telegram Community",
+    description: "@Farhan_build_discussion",
+    href: "https://t.me/Farhan_build_discussion",
   },
 ]
 

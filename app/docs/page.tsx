@@ -4,8 +4,8 @@ import { DocsSidebar } from "@/components/docs/docs-sidebar"
 import { DocsContent } from "@/components/docs/docs-content"
 
 export const metadata = {
-  title: "Documentation - Anbu AI",
-  description: "API documentation for Anbu AI platform",
+  title: "Documentation - FRN AI",
+  description: "API documentation for FRN AI platform - Chat, Image Generation, and Image Editing APIs",
 }
 
 export default function DocsPage() {

@@ -35,8 +35,8 @@ const stats = [
 ]
 
 export const metadata = {
-  title: "About - Anbu AI",
-  description: "Learn about Anbu AI and our mission",
+  title: "About - FRN AI",
+  description: "Learn about FRN AI and our mission - Advanced AI Platform by Gtajisan",
 }
 
 export default function AboutPage() {
@@ -50,8 +50,7 @@ export default function AboutPage() {
             <Badge className="mb-4">About Us</Badge>
             <h1 className="text-3xl md:text-4xl font-bold mb-4">Making AI Accessible to Everyone</h1>
             <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-              Anbu AI is an open-source platform that democratizes access to powerful AI models. No login required,
-              completely free.
+              FRN AI is an advanced platform that democratizes access to powerful AI models. Built by Gtajisan, featuring text generation, image creation, and image editing. No login required, completely free.
             </p>
           </div>
 

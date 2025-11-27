@@ -43,7 +43,7 @@ export function Header() {
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
             <Zap className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="text-xl font-bold">Anbu AI</span>
+          <span className="text-xl font-bold">FRN AI</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -86,18 +86,18 @@ export function Header() {
           {/* Social Icons - Desktop */}
           <div className="hidden md:flex items-center gap-1">
             <Button variant="ghost" size="icon" asChild>
-              <a href="https://github.com/anbuinfosec" target="_blank" rel="noopener noreferrer">
+              <a href="https://github.com/frnwot" target="_blank" rel="noopener noreferrer">
                 <Github className="h-4 w-4" />
               </a>
             </Button>
             <Button variant="ghost" size="icon" asChild>
-              <a href="https://t.me/anbuinfosec" target="_blank" rel="noopener noreferrer">
+              <a href="https://t.me/FARHAN_MUH_TASIM" target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="h-4 w-4" />
               </a>
             </Button>
             <Button variant="ghost" size="icon" asChild>
-              <a href="https://twitter.com/anbuinfosec" target="_blank" rel="noopener noreferrer">
-                <Twitter className="h-4 w-4" />
+              <a href="https://youtube.com/@zerox-farhan?si=fOn3eNxkdnS0HbtW" target="_blank" rel="noopener noreferrer">
+                <Youtube className="h-4 w-4" />
               </a>
             </Button>
           </div>
@@ -120,7 +120,7 @@ export function Header() {
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
                       <Zap className="h-4 w-4 text-primary-foreground" />
                     </div>
-                    <span className="text-lg font-bold">Anbu AI</span>
+                    <span className="text-lg font-bold">FRN AI</span>
                   </Link>
                 </div>
 

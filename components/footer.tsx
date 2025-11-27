@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
 
 const socialLinks = [
-  { name: "GitHub", href: "https://github.com/anbuinfosec", icon: Github },
-  { name: "Telegram", href: "https://t.me/AnbuSoft", icon: MessageCircle },
-  { name: "Twitter", href: "https://twitter.com/anbuinfosec", icon: Twitter },
-  { name: "YouTube", href: "https://youtube.com/@anbuinfosec", icon: Youtube },
-  { name: "Facebook", href: "https://facebook.com/anbuinfosec", icon: Facebook },
-  { name: "Instagram", href: "https://instagram.com/anbuinfosec", icon: Instagram },
-  { name: "LinkedIn", href: "https://linkedin.com/company/anbuinfosec", icon: Linkedin },
+  { name: "GitHub", href: "https://github.com/frnwot", icon: Github },
+  { name: "Telegram", href: "https://t.me/FARHAN_MUH_TASIM", icon: MessageCircle },
+  { name: "YouTube", href: "https://youtube.com/@zerox-farhan?si=fOn3eNxkdnS0HbtW", icon: Youtube },
+  { name: "Facebook", href: "https://www.facebook.com/share/1FLjnAgh64/", icon: Facebook },
+  { name: "Instagram", href: "https://www.instagram.com/frn_prime/profilecard/?igsh=MWltN3ozMmlyM3JhNg==", icon: Instagram },
+  { name: "LinkedIn", href: "https://linkedin.com/in/jisan-ff", icon: Linkedin },
+  { name: "Telegram Community", href: "https://t.me/Farhan_build_discussion", icon: MessageCircle },
 ]
 
 const quickLinks = [
@@ -49,10 +49,10 @@ export function Footer() {
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
                 <Zap className="h-5 w-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold">Anbu AI</span>
+              <span className="text-xl font-bold">FRN AI</span>
             </Link>
             <p className="text-sm text-muted-foreground mb-6 max-w-xs">
-              {t("openSourceAI")}. Access powerful AI models for text generation and image creation.
+              Advanced AI platform by Gtajisan. Access powerful AI models for text generation, image creation, and image editing.
             </p>
 
             {/* Social Links */}
