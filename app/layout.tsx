@@ -11,14 +11,14 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "FRN AI - Advanced AI Platform",
+  title: "FRN AI - Modern AI Interface Platform",
   description:
-    "Advanced AI platform with multiple AI models - OpenAI, Nano Banana, and more. Text generation, image creation, and image editing. No login required.",
-  keywords: ["AI", "API", "OpenAI", "Image Generation", "Image Editing", "Chatbot", "Text Generation", "Nano Banana"],
+    "Modern, multilingual AI interface platform powered by Next.js 16, featuring advanced chat capabilities and image generation. No login required, completely free.",
+  keywords: ["AI", "Chat", "Image Generation", "Multilingual", "Next.js", "AI Platform", "Text Generation"],
   authors: [{ name: "Gtajisan" }],
   openGraph: {
-    title: "FRN AI - Advanced AI Platform",
-    description: "Advanced AI platform with multiple AI models for text and image generation.",
+    title: "FRN AI - Modern AI Interface Platform",
+    description: "Modern, multilingual AI interface platform powered by Next.js 16, featuring advanced chat capabilities and image generation.",
     type: "website",
   },
     generator: 'frn-ai.com'

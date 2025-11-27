@@ -1,6 +1,8 @@
-# 🚀 FRN AI - Advanced Multi-Model AI Platform
+# 🚀 FRN AI
 
-A modern, feature-rich AI platform featuring chat, image generation, voice assistance, and image editing. Built with Next.js 16, powered by free open-source AI APIs.
+Modern, multilingual AI interface platform powered by Next.js 16, featuring advanced chat capabilities and image generation.
+
+A feature-rich AI platform with multilingual support, voice assistance, and image editing. Powered by free open-source AI APIs with zero configuration.
 
 **Live Demo:** [Deploy to Vercel](#deploying-to-vercel)
 
